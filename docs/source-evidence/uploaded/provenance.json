@@ -1,0 +1,22 @@
+{
+  "evidenceType": "user-supplied-three-region-extract",
+  "fileName": "iui-yogyakarta-boundaries.geojson",
+  "receivedAt": "2026-11-02",
+  "sha256": "ba842977bb78f645c1d05a05132a90a0fbfd9a258ba652c6560a89ffd36ff12c",
+  "claimedSource": "geoBoundaries gbOpen IDN ADM2",
+  "claimedBoundaryId": "IDN-ADM2-22746128",
+  "reportedBoundaryYear": "2020",
+  "reportedLicense": "CC-BY-3.0-IGO",
+  "licenseUrl": "https://creativecommons.org/licenses/by/3.0/igo/",
+  "originalMetadataUrl": "https://www.geoboundaries.org/api/current/gbOpen/IDN/ADM2/",
+  "verification": {
+    "internalIdentifiers": "All three feature shapeIDs have the 22746128 dataset prefix and exact expected region IDs; shapeGroup=IDN, shapeType=ADM2.",
+    "geometry": "Shapely topology, closed rings, winding, extent, reference-marker containment and no overlapping interiors passed.",
+    "crs": "RFC7946 WGS84 longitude/latitude default; no explicit CRS member or original CRS metadata supplied.",
+    "upstreamComparison": "Not performed: original API response and upstream geometry snapshot are unavailable.",
+    "originalAttribution": "Original dataset citation/source notices not supplied; full attribution and commercial-redistribution review remain pending."
+  },
+  "sourceCommit": null,
+  "upstreamRetrievedAt": null,
+  "publicationStatus": "pending-upstream-attribution"
+}

@@ -1,4 +1,5 @@
 import {BOUNDARY_LICENSE,BOUNDARY_LICENSE_URL,BOUNDARY_METADATA_URL} from './boundaryMetadata.ts';
+import {normalizeSuppliedBoundaries,SUPPLIED_BOUNDARY_ID,SUPPLIED_BOUNDARY_SHA256,SUPPLIED_BOUNDARY_PATH} from './suppliedBoundaries.ts';
 import type {Feature,FeatureCollection,MultiPolygon,Polygon,Position} from 'geojson';
 import type {Locale} from './catalog';
 
@@ -6,12 +7,18 @@ export const regionIds = ['yogyakarta', 'sleman', 'bantul'] as const;
 export type RegionId = typeof regionIds[number];
 export type BoundaryFeature = Feature<Polygon | MultiPolygon, {regionId: RegionId; name: string; sourceShapeId: string}>;
 export type BoundaryCollection = FeatureCollection<Polygon | MultiPolygon, BoundaryFeature['properties']>;
-export interface BoundaryProvenance {
- provider: 'geoBoundaries'; release: string; boundaryYear: string; boundaryId: string;
- sourceUrl: string; metadataUrl: string; license: 'CC-BY-3.0-IGO'; licenseUrl: string;
- attribution: string; retrievedAt: string; sourceSha256: string; changes: string;
- sourceCommit:string;metadataSha256:string;citationSha256:string;licenseSha256:string;receiptSha256:string;
+interface BoundaryProvenanceBase {
+ provider:'geoBoundaries';release:string;boundaryYear:string;boundaryId:string;
+ sourceUrl:string;metadataUrl:string;license:'CC-BY-3.0-IGO';licenseUrl:string;
+ attribution:string;sourceSha256:string;changes:string;
 }
+export type BoundaryProvenance = BoundaryProvenanceBase & (
+ {verification:'reviewed-originals';publicationStatus:'reviewed';retrievedAt:string;
+ sourceCommit:string;metadataSha256:string;citationSha256:string;licenseSha256:string;receiptSha256:string} |
+ {verification:'supplied-subset';publicationStatus:'pending-upstream-attribution';retrievedAt:null;receivedAt:string;
+ sourceCommit:null;metadataSha256:null;citationSha256:null;licenseSha256:null;receiptSha256:null;
+ uploadEvidenceFile:string;uploadRecordSha256:string;validationReportSha256:string}
+);
 export type BoundaryDataset = {status:'blocked';reason:'source-access';provenance:null;collection:null} |
  {status:'ready';provenance:BoundaryProvenance;collection:BoundaryCollection};
 export type Bbox = [[number,number],[number,number]];
@@ -33,7 +40,12 @@ export function validateBoundaryDataset(value:unknown):BoundaryDataset {
  if(!record(value))throw new Error('Invalid boundary dataset');
  if(value.status==='blocked'&&value.reason==='source-access'&&value.provenance===null&&value.collection===null)return value as BoundaryDataset;
  const p=value.provenance;
- if(value.status!=='ready'||!record(p)||p.provider!=='geoBoundaries'||p.license!==BOUNDARY_LICENSE||p.licenseUrl!==BOUNDARY_LICENSE_URL||p.metadataUrl!==BOUNDARY_METADATA_URL||p.boundaryYear!=='2020'||!(/^[a-f0-9]{40}$/).test(String(p.sourceCommit))||!['metadataSha256','citationSha256','licenseSha256','receiptSha256'].every(k=>(/^[a-f0-9]{64}$/).test(String(p[k])))||!['release','boundaryYear','boundaryId','attribution','retrievedAt','changes'].every(k=>nonempty(p[k]))||!https(p.sourceUrl)||!https(p.metadataUrl)||!/^\d{4}-\d{2}-\d{2}$/.test(String(p.retrievedAt))||!(/^[a-f0-9]{64}$/).test(String(p.sourceSha256)))throw new Error('Missing boundary provenance');
+ if(value.status!=='ready'||!record(p)||p.provider!=='geoBoundaries'||p.license!==BOUNDARY_LICENSE||p.licenseUrl!==BOUNDARY_LICENSE_URL||p.metadataUrl!==BOUNDARY_METADATA_URL||p.boundaryYear!=='2020'||!['release','boundaryYear','boundaryId','attribution','changes'].every(k=>nonempty(p[k]))||!https(p.sourceUrl)||!(/^[a-f0-9]{64}$/).test(String(p.sourceSha256)))throw new Error('Missing boundary provenance');
+ if(p.verification==='reviewed-originals'){
+  if(p.publicationStatus!=='reviewed'||!(/^\d{4}-\d{2}-\d{2}$/).test(String(p.retrievedAt))||!(/^[a-f0-9]{40}$/).test(String(p.sourceCommit))||!['metadataSha256','citationSha256','licenseSha256','receiptSha256'].every(k=>(/^[a-f0-9]{64}$/).test(String(p[k]))))throw new Error('Missing reviewed-original provenance');
+ }else if(p.verification==='supplied-subset'){
+  if(p.publicationStatus!=='pending-upstream-attribution'||p.boundaryId!==SUPPLIED_BOUNDARY_ID||p.sourceSha256!==SUPPLIED_BOUNDARY_SHA256||p.sourceUrl!==BOUNDARY_METADATA_URL||p.uploadEvidenceFile!==SUPPLIED_BOUNDARY_PATH||!(/^\d{4}-\d{2}-\d{2}$/).test(String(p.receivedAt))||!['retrievedAt','sourceCommit','metadataSha256','citationSha256','licenseSha256','receiptSha256'].every(k=>p[k]===null)||!['uploadRecordSha256','validationReportSha256'].every(k=>(/^[a-f0-9]{64}$/).test(String(p[k]))))throw new Error('Invalid supplied-subset provenance');
+ }else throw new Error('Unknown boundary verification mode');
  const c=value.collection;
  if(!record(c)||c.type!=='FeatureCollection'||!Array.isArray(c.features)||c.features.length!==3)throw new Error('Expected three study boundaries');
  const seen=new Set<string>();
@@ -57,6 +69,7 @@ export function validateBoundaryDataset(value:unknown):BoundaryDataset {
    }
   }
  }
+ if(p.verification==='supplied-subset')normalizeSuppliedBoundaries(c);
  return value as unknown as BoundaryDataset;
 }
 export async function loadBoundaryDataset(signal:AbortSignal):Promise<BoundaryDataset> {

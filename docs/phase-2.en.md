@@ -1,6 +1,6 @@
 # Phase 2 — SP2020 population and pending administrative geometry
 
-Work remains on `feature/geospatial-integration`, preserving `d888569` and the original bilingual design. **Population comparison is integrated; real administrative geometry is not yet integrated.**
+Work remains on `feature/geospatial-integration`, preserving `d888569` and the original bilingual design. **The supplied real three-region geometry and SP2020 population comparison are integrated for feature-branch review. Geometry/UI validation passes; upstream snapshot and original attribution verification remain incomplete.**
 
 ## Population source, definitions, and verification
 
@@ -19,85 +19,79 @@ All three observations use the same source URL, SP2020 census-count series, year
 
 The chart uses the two selected real observations, locale-aware number formatting, a zero baseline, and a common scale whose maximum is the largest selected count. The table shows the same values and reference period. Original source links and the verification limitation appear beside the chart. BPS attribution is retained. Detailed BPS redistribution/reuse terms were not supplied or retrieved; **no blanket Creative Commons or commercial-use license is asserted for the BPS material**. The boundary license must never be assigned to the statistics. An original table export and the applicable BPS reuse notice can be uploaded later to strengthen the evidence record.
 
-## Boundary identity and licensing correction
+## Uploaded boundary geometry: actual validation
 
-The independently reviewed primary metadata endpoint is:
+Original user-uploaded file: `docs/source-evidence/uploaded/iui-yogyakarta-boundaries.geojson` (**25,850 bytes**).
+
+SHA256: `ba842977bb78f645c1d05a05132a90a0fbfd9a258ba652c6560a89ffd36ff12c`.
+
+The original bytes are retained verbatim. The application adds stable IUI feature IDs, display names and `sourceShapeId`; original properties and all coordinate values remain unchanged. No repair, reprojection, simplification, or rounding was applied.
+
+| Uploaded administrative name | Original shape ID | Geometry | Vertices including closure |
+| --- | --- | --- | ---: |
+| Kota Yogyakarta | `22746128B9761158776103` | Polygon | 77 |
+| Sleman | `22746128B68764842139539` | Polygon | 263 |
+| Bantul | `22746128B15956982783625` | Polygon | 316 |
+
+Every feature declares `shapeGroup=IDN` and `shapeType=ADM2`; all shape IDs carry the `22746128` prefix. This verifies **internal consistency with the supplied boundary ID `IDN-ADM2-22746128`**. Those self-declared identifiers do not independently establish that the coordinates are identical to a particular upstream download. The upload contains no original API metadata, repository commit, source retrieval date, citation or license notice. Those fields are recorded as unavailable, not invented.
+
+The file has no explicit `crs` member. Under RFC 7946 it is interpreted as WGS84 longitude/latitude (OGC:CRS84). Finite 2D coordinates, plausible Yogyakarta extents, axis order, ring closure and exterior/hole winding were checked. Collection extent is approximately 110.204–110.547° E, 8.028–7.542° S. This confirms consistency with that interpretation; it is not independent proof of the source's original CRS. Projected or ambiguous declared CRS inputs are rejected.
+
+Shapely **2.1.2** checked the actual file: all polygons are valid, nonempty, have positive planar area, and contain the app's corresponding reference marker. Every pair has zero interior-overlap area and shared boundary segments. Their union is a valid Polygon. Planar degree-based checks are used only for topology; **no square-kilometre area or population density is derived**. Full machine-readable results and actual interior points used by browser tests are retained in `docs/source-evidence/uploaded/validation-report.json`.
+
+## Source, version, attribution and commercial reuse
+
+Original claimed dataset source: **geoBoundaries gbOpen, Indonesia / IDN ADM2**.
 https://www.geoboundaries.org/api/current/gbOpen/IDN/ADM2/
 
-The review reports:
+Version identity supplied by the user: **`IDN-ADM2-22746128`**. The prior independent metadata review reports `boundaryYearRepresented=2020` and **CC BY 3.0 IGO**:
+https://creativecommons.org/licenses/by/3.0/igo/
 
-- Country/level: **IDN / ADM2**.
-- `boundaryYearRepresented`: **2020**.
-- `boundaryLicense`: **CC BY 3.0 IGO**.
-- License: https://creativecommons.org/licenses/by/3.0/igo/
+The map displays that dataset ID/year and a license link, and credits geoBoundaries gbOpen and the supplied extract. It preserves the distinction between an uploaded subset with validated identifiers/topology and reviewed original source files. The upload's source commit, primary-source retrieval date, and hashes of nonexistent metadata/citation/license files are explicitly `null`. The date `2026-11-02` is receipt of the upload, not upstream retrieval.
 
-This is dataset-specific information. **Do not label this Indonesia dataset CC BY 4.0.** The previously inspected repository-level license and v6 Git LFS pointers do not establish this API dataset's identity or license. Historical snapshots remain in `docs/source-evidence/` for audit history; the current importer no longer uses their old hashes or assumes a v6 release. The user-supplied metadata-field review is separately recorded in `geoboundaries-idn-adm2-independent-review.json`; it is not represented as the original API response.
+CC BY 3.0 IGO permits commercial reuse subject to its actual terms, including applicable original creator/source credit, license reference, retained notices and change/adaptation statements; no endorsement is implied. **The exact original attribution notices and third-party exclusions were not supplied**, so full commercial-publication review is pending. The repository-level CC BY 4.0 license must not be substituted for the Indonesia dataset's reported CC BY 3.0 IGO. No GADM or FAO GAUL data are used.
 
-CC BY 3.0 IGO allows commercial reuse subject to its actual terms: appropriate source/creator credit, the license reference/link, retained source notices, and identification of changes/adaptations. It does not authorize implied endorsement or unrestricted use of an organization's identity/logo. Any third-party exclusions in the source metadata/citation also need review. The exact original source attribution cannot be reconstructed without the original metadata and citation, so **no geometry is redistributed yet**. No GADM or FAO GAUL boundaries are used.
+Current development-map credit explicitly identifies geoBoundaries gbOpen, the dataset ID, user-supplied subset, reported year/license, and pending original attribution. It is a transparent interim credit, **not a claim that all original license obligations have been established**. The UI shows this source-review limitation in both languages. Public-release validation deliberately rejects the pending state; nothing is merged or deployed.
 
-The supplied metadata URL also returned proxy CONNECT 403 on the one attempt made in this continuation. No blocked download was retried and no alternative dataset was sought.
+To complete provenance, supply the **original API response for `IDN-ADM2-22746128`**, the same snapshot's **`CITATION-AND-USE-geoBoundaries.txt` and source notices**, applicable **CC BY 3.0 IGO legal text**, and a **traceable download/export record** (original geometry URL/revision and hashes, or original upstream geometry for an exact subset comparison). The three-region file is already retained and does not need to be uploaded again. No inaccessible source was repeatedly requested during this integration.
 
-## Exact upload bundle required for polygons
+## Reproduce the actual-file checks
 
-Upload a ZIP containing the following **original files**, with a reviewed receipt. The simplified file is preferred to keep the upload manageable; it must come from the same API response/snapshot.
-
-| Filename | Obtain from / requirements |
-| --- | --- |
-| `geoBoundaries-IDN-ADM2-api.json` | Save the complete, unedited JSON response from the metadata endpoint above. It must contain the dataset ID, ISO/level, represented year, license, original boundary sources and download links. A hand-written summary is not sufficient. |
-| `geoBoundaries-IDN-ADM2_simplified.geojson` | Download the **exact file linked by `simplifiedGeometryGeoJSON` in that response**, preserving all Indonesia ADM2 features, properties, shape IDs, and WGS84 coordinates. Do not substitute another release or manually draw boundaries. |
-| `CITATION-AND-USE-geoBoundaries.txt` | Obtain from the same geoBoundaries repository snapshot/dataset directory as that geometry. Retain all original credit and notices. |
-| `CC-BY-3.0-IGO-legalcode.html` | Save the applicable full legal text from https://creativecommons.org/licenses/by/3.0/igo/legalcode . Include any additional dataset-specific notices referenced by the metadata/citation in the archive. |
-| `source-receipt.json` | Record actual download URLs/time, SHA256 hashes, the externally verified full repository commit, exact attribution, and commercial-reuse/third-party-notice review as described below. |
-
-The receipt is a review record, not an upstream signature. Compute hashes from the actual downloaded bytes. Do not fill any unknown field with an invented value. A metadata geometry URL may use a shortened commit; resolve it to the actual full commit using the official repository and record that resolution. The importer requires the full commit to match the original URL's revision prefix.
-
-Receipt structure (replace every placeholder with verified information):
-
-```json
-{
-  "metadataUrl": "https://www.geoboundaries.org/api/current/gbOpen/IDN/ADM2/",
-  "geometryUrl": "EXACT simplifiedGeometryGeoJSON URL from the original response",
-  "sourceCommit": "EXTERNALLY VERIFIED FULL 40-CHARACTER COMMIT",
-  "boundaryID": "EXACT boundaryID FROM THAT RESPONSE",
-  "retrievedAt": "ACTUAL YYYY-MM-DD",
-  "license": "CC-BY-3.0-IGO",
-  "licenseUrl": "https://creativecommons.org/licenses/by/3.0/igo/",
-  "attribution": "VERIFIED geoBoundaries AND ORIGINAL SOURCE CREDIT, including boundarySource verbatim",
-  "reviewedForCommercialReuse": true,
-  "thirdPartyNoticesReviewed": true,
-  "sha256": {
-    "metadata": "SHA256 OF API JSON",
-    "geometry": "SHA256 OF GEOJSON",
-    "citation": "SHA256 OF CITATION FILE",
-    "license": "SHA256 OF LEGAL TEXT FILE"
-  }
-}
-```
-
-Set review flags to true **only after** the original notices and license have actually been checked. Do not edit source geometry to make validation pass. An unsupported license, mismatched year/identity, ambiguous region, malformed geometry, or conflicting notice must stop ingestion for review.
-
-## Offline ingestion and validation
-
-Once those files are supplied, extract them outside the checkout and retain the original archive for audit. Optional topology tooling is isolated in a virtual environment:
+Node 24+ runs the app and structural validation. Python with pinned Shapely is required for topology checks:
 
 ```sh
 python3 -m venv /tmp/iui-gis-venv
 /tmp/iui-gis-venv/bin/pip install -r scripts/requirements-geospatial.txt
-IUI_GIS_PYTHON=/tmp/iui-gis-venv/bin/python npm run data:boundaries -- /absolute/path/to/upload-directory
+IUI_GIS_PYTHON=/tmp/iui-gis-venv/bin/python npm run data:boundaries:upload
+IUI_GIS_PYTHON=/tmp/iui-gis-venv/bin/python npm run data:validate
 npm run typecheck
-npm run data:validate
 npm run build
 npm test
 ```
 
-`data:boundaries` is now **offline-only**: with no input directory it exits with the exact file list and makes no network request. It checks the original API's 2020 IDN ADM2 identity and CC BY 3.0 IGO, the metadata-linked official download revision, reviewed receipt hashes/attribution, source feature identity and count, unique regional matches, closed rings and expected geographic extents. Shapely must then verify nonempty valid topology and no overlapping study polygons. Geometry is subsetted without coordinate changes; original shape IDs are retained. Metadata, citation, license, receipt, and geometry audit are retained before the app's boundary asset is atomically replaced.
+`data:boundaries:upload` imports only the exact retained/upload-hashed three-region file. It reruns topology checks and records the supplied-file provenance and validation report before updating the map asset. `data:validate` checks source/evidence hashes, deep equality of the normalized original geometry/properties with the served collection, identity/CRS/rings, and a freshly recomputed Shapely report. It separately verifies the unchanged SP2020 counts against their review record.
 
-These checks establish structural/topological consistency and the supplied evidence chain; they do not constitute independent remote verification of uploaded files or legal/cartographic certification. Source hash receipt trust is explicitly the independent review's trust. The real-file ingestion and successful topology path remain **unexecuted** because no original geometry was supplied. After ingestion, inspect all three extents and update bilingual boundary status text before publishing. Matching year labels alone do not prove census/boundary geographic equivalence.
+```sh
+IUI_GIS_PYTHON=/tmp/iui-gis-venv/bin/python npm run data:validate:release
+```
 
-MapLibre hover highlight, click/keyboard selection, bilingual tooltip, full-extent fitting, visibility toggle, and license/attribution rendering are implemented. Their browser tests use clearly synthetic geometry only through request interception. **No synthetic polygon is shipped as a real administrative boundary.**
+The release command was run and **exits nonzero as expected**, because original upstream attribution/snapshot verification remains pending. This is separate from the passing development geometry/data validator and browser tests. `status: ready` means renderable development data; `publicationStatus: pending-upstream-attribution` must not be interpreted as a completed source/publication review.
+
+The earlier `data:boundaries` importer for complete reviewed-original bundles remains available. Its `reviewed-originals` provenance mode still requires the original metadata, citation/license notices, receipt and source identity; supplied-subset mode does not manufacture those documents or weaken that path.
+
+## Actual-file browser validation
+
+All **16 tests pass**, including the preserved bilingual navigation, population values, mobile layout, malformed-data rejection and synthetic edge-case tests. Four additional tests use the actual retained/served uploaded file:
+
+- Assert the accepted SHA256, exact original names/shape IDs, coordinate/property preservation, and retained topology report.
+- Reject renamed regions, EPSG:3857 declarations, altered dataset IDs and out-of-envelope coordinates.
+- Fetch the real production boundary asset without intercepting/substituting it. Use interior points derived from those real polygons to hover/highlight, click/select and fit **all three regions**; compare canvas renders, check selected extents, switch tooltip language and toggle boundaries. Check the CC BY 3.0 IGO link and source-review message.
+- Exercise the real polygons on mobile, expanded-map/Escape behavior and unchanged SP2020 comparison.
+
+The reviewed screenshot `test-results/real-boundary-map.png` shows the actual three-region geometry rendered by MapLibre. External basemap requests were intentionally blocked during those tests, demonstrating that the bundled polygons do not depend on live map tiles. No synthetic geometry replaced the production asset in these real-file tests.
 
 ## Future layers and current limitations
 
 NDVI/LST definitions remain planned and disabled. Future scenes need acquisition dates, original licenses, cloud/QA masking, units, scale/offset, no-data convention and reproducible processing. NDVI is unitless; LST must use explicit temperature units and is not air temperature. Rendered colors are never scientific observations.
 
-Current checks cover the real supplied population counts, evidence/count agreement, month precision, inconsistent definitions/geographies, bilingual chart updates and accessible names, proportional bar lengths, source/license links, mobile overflow, original navigation, and synthetic GIS interactions. The validator reports **three population observations and zero real polygons**. Remaining work is the original boundary bundle, successful real geometry validation/visual review, census-to-boundary reconciliation, and primary BPS snapshot/reuse evidence. Do not merge into main without approval.
+The current validator reports **three supplied polygons and three population observations**. Remaining limitations: upstream snapshot equality and full original attribution/license-notice review, independent original CRS confirmation, BPS primary-page/reuse evidence, census-to-boundary geographic reconciliation, and live basemap availability. NDVI/LST, density and other derived statistics remain unavailable. Keep the work on the feature branch; no main merge or public release is authorized by these development checks.

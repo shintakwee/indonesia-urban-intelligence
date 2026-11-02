@@ -30,10 +30,10 @@ test('population stays blocked without complete primary-source observations; ras
  expect(JSON.stringify(boundaryLayers)).toContain('hover');
  expect(JSON.stringify(boundaryLayers)).toContain('selected');
 });
-test('SP2020 population is shown while real geometry stays unavailable',async({page})=>{
+test('SP2020 population is preserved alongside the uploaded polygons',async({page})=>{
  await page.goto('/');
- await expect(page.getByLabel('Batas administrasi',{exact:true})).toBeDisabled();
- await expect(page.getByText(/Integrasi batas belum selesai/)).toBeVisible();
+ await expect(page.getByLabel('Batas administrasi',{exact:true})).toBeEnabled();
+ await expect(page.locator('.boundary-review-note')).toContainText('Geometri dan identitas lulus');
  await page.getByRole('navigation').getByRole('link',{name:'Bandingkan',exact:true}).click();
  await expect(page.locator('.chart-bar')).toHaveCount(2);
  await expect(page.locator('.population-chart')).toContainText('373.589');

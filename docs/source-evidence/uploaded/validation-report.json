@@ -1,0 +1,104 @@
+{
+  "validator": "Shapely",
+  "validatorVersion": "2.1.2",
+  "sourceSha256": "ba842977bb78f645c1d05a05132a90a0fbfd9a258ba652c6560a89ffd36ff12c",
+  "datasetIdChecked": "IDN-ADM2-22746128",
+  "identityCheck": "Uploaded properties and shape-ID prefix; upstream equality unverified",
+  "crsDeclaration": null,
+  "crsInterpretation": "RFC7946 default WGS84 longitude/latitude (OGC:CRS84); range/order/winding checked; no original CRS metadata supplied",
+  "features": [
+    {
+      "name": "Kota Yogyakarta",
+      "sourceShapeId": "22746128B9761158776103",
+      "geometryType": "Polygon",
+      "valid": true,
+      "nonempty": true,
+      "vertexCount": 77,
+      "bounds": [
+        110.34460570000005,
+        -7.84015039999997,
+        110.40507480000008,
+        -7.766351399999962
+      ],
+      "representativePoint": [
+        110.37392893214516,
+        -7.80496734999997
+      ],
+      "referenceMarkerContained": true
+    },
+    {
+      "name": "Sleman",
+      "sourceShapeId": "22746128B68764842139539",
+      "geometryType": "Polygon",
+      "valid": true,
+      "nonempty": true,
+      "vertexCount": 263,
+      "bounds": [
+        110.21614260000007,
+        -7.837450399999966,
+        110.54652950000008,
+        -7.54189729999996
+      ],
+      "representativePoint": [
+        110.38014899187905,
+        -7.694216899999972
+      ],
+      "referenceMarkerContained": true
+    },
+    {
+      "name": "Bantul",
+      "sourceShapeId": "22746128B15956982783625",
+      "geometryType": "Polygon",
+      "valid": true,
+      "nonempty": true,
+      "vertexCount": 316,
+      "bounds": [
+        110.20395330000008,
+        -8.028013299999941,
+        110.52132640000008,
+        -7.768221499999981
+      ],
+      "representativePoint": [
+        110.38549153369831,
+        -7.8985557999999685
+      ],
+      "referenceMarkerContained": true
+    }
+  ],
+  "pairs": [
+    {
+      "regions": [
+        "Kota Yogyakarta",
+        "Sleman"
+      ],
+      "interiorOverlap": false,
+      "sharedBoundary": true
+    },
+    {
+      "regions": [
+        "Kota Yogyakarta",
+        "Bantul"
+      ],
+      "interiorOverlap": false,
+      "sharedBoundary": true
+    },
+    {
+      "regions": [
+        "Sleman",
+        "Bantul"
+      ],
+      "interiorOverlap": false,
+      "sharedBoundary": true
+    }
+  ],
+  "unionValid": true,
+  "unionGeometryType": "Polygon",
+  "collectionBounds": [
+    110.20395330000008,
+    -8.028013299999941,
+    110.54652950000008,
+    -7.54189729999996
+  ],
+  "repairsApplied": false,
+  "reprojectionApplied": false
+}

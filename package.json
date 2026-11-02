@@ -10,7 +10,9 @@
     "test": "playwright test",
     "typecheck": "tsc --noEmit",
     "data:boundaries": "node scripts/import-boundaries.mjs",
-    "data:validate": "node scripts/validate-data.mjs"
+    "data:validate": "node scripts/validate-data.mjs",
+    "data:boundaries:upload": "node scripts/import-supplied-boundaries.mjs",
+    "data:validate:release": "node scripts/validate-data.mjs --require-publishable"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",
