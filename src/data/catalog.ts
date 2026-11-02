@@ -6,16 +6,10 @@ export const regions = [
  {id:'bantul',name:'Bantul',coordinate:[110.3289,-7.8879] as [number,number],kind:{id:'Kabupaten',en:'Regency'},source:'https://bantulkab.bps.go.id'},
 ];
 export type Locale = 'id'|'en';
-export interface IndicatorObservation {
- regionId: string; indicatorId: string; value: number; unit: string;
- year: number; sourceUrl: string; sourceTitle: string; retrievedAt: string;
- geographyVersion: string; methodology: string;
-}
-// Deliberately empty until observations have been checked against primary publications.
-export const observations: IndicatorObservation[] = [];
 export const sources = [
- {name:'Badan Pusat Statistik',url:'https://www.bps.go.id',type:{id:'Statistik resmi',en:'Official statistics'},description:{id:'Kandidat sumber kependudukan dan indikator sosial ekonomi. Belum diimpor atau diverifikasi dalam aplikasi.',en:'Candidate source for population and socioeconomic indicators. Not yet imported or verified in this application.'}},
- {name:'Badan Informasi Geospasial',url:'https://tanahair.indonesia.go.id',type:{id:'Geospasial resmi',en:'Official geospatial data'},description:{id:'Kandidat sumber batas administrasi dan peta dasar. Batas resmi belum tersedia di aplikasi.',en:'Candidate source for administrative boundaries and base mapping. Official boundaries are not yet available in the application.'}},
- {name:'OpenStreetMap',url:'https://www.openstreetmap.org/copyright',type:{id:'Peta komunitas',en:'Community mapping'},description:{id:'Peta dasar daring, © kontributor OpenStreetMap, ODbL. Ketersediaan bergantung pada jaringan; bukan sumber batas resmi.',en:'Online basemap, © OpenStreetMap contributors, ODbL. Availability depends on network access; not an official boundary source.'}},
- {name:'Copernicus Data Space',url:'https://dataspace.copernicus.eu',type:{id:'Penginderaan jauh',en:'Remote sensing'},description:{id:'Kandidat citra Sentinel untuk analisis tutupan lahan mendatang. Belum ada analisis citra yang diintegrasikan.',en:'Candidate Sentinel imagery for future land-cover analysis. No imagery analysis has been integrated.'}},
+ {name:'Badan Pusat Statistik',status:'blocked',url:'https://www.bps.go.id',type:{id:'Statistik resmi',en:'Official statistics'},description:{id:'Sumber primer penduduk yang dituju. Akses diblokir; tahun, definisi sensus/proyeksi, dan tabel untuk ketiga wilayah belum dapat diverifikasi.',en:'Intended primary population source. Access is blocked; matching years, census/projection definitions, and tables for the three regions have not been verified.'}},
+ {name:'Badan Informasi Geospasial',status:'blocked',url:'https://tanahair.indonesia.go.id',type:{id:'Geospasial resmi',en:'Official geospatial data'},description:{id:'Kandidat sumber batas administrasi dan peta dasar. Batas resmi belum tersedia di aplikasi.',en:'Candidate source for administrative boundaries and base mapping. Official boundaries are not yet available in the application.'}},
+ {name:'OpenStreetMap',status:'online',url:'https://www.openstreetmap.org/copyright',type:{id:'Peta komunitas',en:'Community mapping'},description:{id:'Peta dasar daring, © kontributor OpenStreetMap, ODbL. Ketersediaan bergantung pada jaringan; bukan sumber batas resmi.',en:'Online basemap, © OpenStreetMap contributors, ODbL. Availability depends on network access; not an official boundary source.'}},
+ {name:'Copernicus Data Space',status:'candidate',url:'https://dataspace.copernicus.eu',type:{id:'Penginderaan jauh',en:'Remote sensing'},description:{id:'Kandidat citra Sentinel untuk analisis tutupan lahan mendatang. Belum ada analisis citra yang diintegrasikan.',en:'Candidate Sentinel imagery for future land-cover analysis. No imagery analysis has been integrated.'}},
+ {name:'geoBoundaries · gbOpen ADM2',status:'blocked',url:'https://github.com/wmgeolab/geoBoundaries/tree/1289e40e366c7b320550be1ee0614a9472d572d4/releaseData/gbOpen/IDN/ADM2',type:{id:'Batas penelitian terbuka',en:'Open research boundaries'},description:{id:'Target rilis v6.0.0, IDN ADM2. Lisensi repositori CC BY 4.0 sudah diperiksa; geometri, metadata, tahun batas, dan kutipan khusus dataset belum dapat diunduh. Belum diintegrasikan.',en:'Target release v6.0.0, IDN ADM2. Repository CC BY 4.0 license inspected; geometry, metadata, boundary year, and dataset-specific citation could not be downloaded. Not yet integrated.'}},
 ];
