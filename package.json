@@ -12,7 +12,11 @@
     "data:boundaries": "node scripts/import-boundaries.mjs",
     "data:validate": "node scripts/validate-data.mjs",
     "data:boundaries:upload": "node scripts/import-supplied-boundaries.mjs",
-    "data:validate:release": "node scripts/validate-data.mjs --require-publishable"
+    "data:validate:release": "node scripts/validate-data.mjs --require-publishable",
+    "build:private-preview": "tsc -b && vite build --mode private-preview --outDir dist-private-preview",
+    "preview:private-preview": "vite preview --outDir dist-private-preview --host 127.0.0.1 --port 4174",
+    "package:hostinger-preview": "npm run build:private-preview && python3 scripts/package-hostinger-preview.py",
+    "test:private-preview": "playwright test --config playwright.preview.config.ts"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",

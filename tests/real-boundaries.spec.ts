@@ -82,8 +82,9 @@ test('real served polygons render, highlight, select, fit all three regions, and
  await expect(page.locator('.boundary-tooltip')).toContainText('Administrative area · Regency');
  await page.getByLabel('Administrative boundaries',{exact:true}).uncheck();await expect(page.locator('.boundary-tooltip')).toHaveCount(0);
  await page.mouse.move(target.x+2,target.y+2);await expect(page.locator('.boundary-tooltip')).toHaveCount(0);
- await page.getByLabel('Administrative boundaries',{exact:true}).check();await page.mouse.move(target.x,target.y);
- await expect(page.locator('.boundary-tooltip')).toContainText('Sleman');
+ await page.getByLabel('Administrative boundaries',{exact:true}).check();
+ // Wait for MapLibre's visibility/render update and re-project after any browser scrolling.
+ await expect(async()=>{const refreshed=await targetPoint(page,'Sleman',true);await page.mouse.move(refreshed.x,refreshed.y);await expect(page.locator('.boundary-tooltip')).toContainText('Sleman',{timeout:1000});}).toPass({timeout:5000});
  await expect(page.locator('.boundary-attribution')).toContainText('IDN-ADM2-22746128');
  await expect(page.locator('.boundary-attribution a').filter({hasText:'CC-BY-3.0-IGO'})).toHaveAttribute('href','https://creativecommons.org/licenses/by/3.0/igo/');
  await expect(page.locator('.boundary-review-note')).toContainText('remain pending before public release');

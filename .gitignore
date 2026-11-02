@@ -151,3 +151,7 @@ vite.config.ts.timestamp-*
 # Browser-test artifacts
 test-results/
 playwright-report/
+
+# Reviewed deployment artifacts (generated, not application source)
+dist-private-preview/
+artifacts/

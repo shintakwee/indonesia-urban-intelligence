@@ -11,6 +11,7 @@ interface BoundaryProvenanceBase {
  provider:'geoBoundaries';release:string;boundaryYear:string;boundaryId:string;
  sourceUrl:string;metadataUrl:string;license:'CC-BY-3.0-IGO';licenseUrl:string;
  attribution:string;sourceSha256:string;changes:string;
+ metadataIndex?:{url:string;commit:string;sha256:string;rowEvidenceFile:string};
 }
 export type BoundaryProvenance = BoundaryProvenanceBase & (
  {verification:'reviewed-originals';publicationStatus:'reviewed';retrievedAt:string;
@@ -19,7 +20,7 @@ export type BoundaryProvenance = BoundaryProvenanceBase & (
  sourceCommit:null;metadataSha256:null;citationSha256:null;licenseSha256:null;receiptSha256:null;
  uploadEvidenceFile:string;uploadRecordSha256:string;validationReportSha256:string}
 );
-export type BoundaryDataset = {status:'blocked';reason:'source-access';provenance:null;collection:null} |
+export type BoundaryDataset = {status:'blocked';reason:'source-access'|'provenance-withheld';provenance:null;collection:null} |
  {status:'ready';provenance:BoundaryProvenance;collection:BoundaryCollection};
 export type Bbox = [[number,number],[number,number]];
 const record=(v:unknown):v is Record<string,unknown>=>typeof v==='object'&&v!==null&&!Array.isArray(v);
@@ -38,7 +39,7 @@ export function collectionBounds(collection:BoundaryCollection):Bbox {
 }
 export function validateBoundaryDataset(value:unknown):BoundaryDataset {
  if(!record(value))throw new Error('Invalid boundary dataset');
- if(value.status==='blocked'&&value.reason==='source-access'&&value.provenance===null&&value.collection===null)return value as BoundaryDataset;
+ if(value.status==='blocked'&&['source-access','provenance-withheld'].includes(String(value.reason))&&value.provenance===null&&value.collection===null)return value as BoundaryDataset;
  const p=value.provenance;
  if(value.status!=='ready'||!record(p)||p.provider!=='geoBoundaries'||p.license!==BOUNDARY_LICENSE||p.licenseUrl!==BOUNDARY_LICENSE_URL||p.metadataUrl!==BOUNDARY_METADATA_URL||p.boundaryYear!=='2020'||!['release','boundaryYear','boundaryId','attribution','changes'].every(k=>nonempty(p[k]))||!https(p.sourceUrl)||!(/^[a-f0-9]{64}$/).test(String(p.sourceSha256)))throw new Error('Missing boundary provenance');
  if(p.verification==='reviewed-originals'){

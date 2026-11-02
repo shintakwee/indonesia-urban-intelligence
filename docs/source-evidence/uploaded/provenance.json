@@ -5,8 +5,11 @@
   "sha256": "ba842977bb78f645c1d05a05132a90a0fbfd9a258ba652c6560a89ffd36ff12c",
   "claimedSource": "geoBoundaries gbOpen IDN ADM2",
   "claimedBoundaryId": "IDN-ADM2-22746128",
-  "reportedBoundaryYear": "2020",
-  "reportedLicense": "CC-BY-3.0-IGO",
+  "verifiedBoundaryYear": "2020",
+  "verifiedMetadataLicense": "CC-BY-3.0-IGO",
+  "metadataIndexSource": "https://raw.githubusercontent.com/wmgeolab/geoBoundaries/8ce2700661a28ee944350e2b329bbabb58d2ff83/releaseData/geoBoundariesOpen-meta.csv",
+  "metadataIndexSha256": "d6f81bc9d3239f63fc36a62c6e3774ae892cedd5c653b8873fe1148311929eea",
+  "originalSourceCredit": "Badan Pusat Statistik (BPS - Statistics Indonesia), World Food Programme, OCHA ROAP",
   "licenseUrl": "https://creativecommons.org/licenses/by/3.0/igo/",
   "originalMetadataUrl": "https://www.geoboundaries.org/api/current/gbOpen/IDN/ADM2/",
   "verification": {
@@ -14,7 +17,7 @@
     "geometry": "Shapely topology, closed rings, winding, extent, reference-marker containment and no overlapping interiors passed.",
     "crs": "RFC7946 WGS84 longitude/latitude default; no explicit CRS member or original CRS metadata supplied.",
     "upstreamComparison": "Not performed: original API response and upstream geometry snapshot are unavailable.",
-    "originalAttribution": "Original dataset citation/source notices not supplied; full attribution and commercial-redistribution review remain pending."
+    "originalAttribution": "Source names and CC BY 3.0 IGO are confirmed by the official metadata index. The complete original citation/source notices and third-party reuse review remain pending."
   },
   "sourceCommit": null,
   "upstreamRetrievedAt": null,

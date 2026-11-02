@@ -33,7 +33,7 @@ The original bytes are retained verbatim. The application adds stable IUI featur
 | Sleman | `22746128B68764842139539` | Polygon | 263 |
 | Bantul | `22746128B15956982783625` | Polygon | 316 |
 
-Every feature declares `shapeGroup=IDN` and `shapeType=ADM2`; all shape IDs carry the `22746128` prefix. This verifies **internal consistency with the supplied boundary ID `IDN-ADM2-22746128`**. Those self-declared identifiers do not independently establish that the coordinates are identical to a particular upstream download. The upload contains no original API metadata, repository commit, source retrieval date, citation or license notice. Those fields are recorded as unavailable, not invented.
+Every feature declares `shapeGroup=IDN` and `shapeType=ADM2`; all shape IDs carry the `22746128` prefix. This verifies **internal consistency with the supplied boundary ID `IDN-ADM2-22746128`**. Those self-declared identifiers do not independently establish that the coordinates are identical to a particular upstream download. The upload contains no original API metadata, geometry repository commit, source retrieval date, citation or license notice. Those fields remain unavailable. A separate official metadata-index row has now been retrieved and retained; it confirms the dataset identity/year/license and credits BPS–Statistics Indonesia, World Food Programme and OCHA ROAP. See [the provenance review](geoboundaries-provenance.md).
 
 The file has no explicit `crs` member. Under RFC 7946 it is interpreted as WGS84 longitude/latitude (OGC:CRS84). Finite 2D coordinates, plausible Yogyakarta extents, axis order, ring closure and exterior/hole winding were checked. Collection extent is approximately 110.204–110.547° E, 8.028–7.542° S. This confirms consistency with that interpretation; it is not independent proof of the source's original CRS. Projected or ambiguous declared CRS inputs are rejected.
 
@@ -44,7 +44,7 @@ Shapely **2.1.2** checked the actual file: all polygons are valid, nonempty, hav
 Original claimed dataset source: **geoBoundaries gbOpen, Indonesia / IDN ADM2**.
 https://www.geoboundaries.org/api/current/gbOpen/IDN/ADM2/
 
-Version identity supplied by the user: **`IDN-ADM2-22746128`**. The prior independent metadata review reports `boundaryYearRepresented=2020` and **CC BY 3.0 IGO**:
+Version identity supplied by the user: **`IDN-ADM2-22746128`**. The independently retrieved official metadata-index row now confirms `boundaryYearRepresented=2020` and **CC BY 3.0 IGO**:
 https://creativecommons.org/licenses/by/3.0/igo/
 
 The map displays that dataset ID/year and a license link, and credits geoBoundaries gbOpen and the supplied extract. It preserves the distinction between an uploaded subset with validated identifiers/topology and reviewed original source files. The upload's source commit, primary-source retrieval date, and hashes of nonexistent metadata/citation/license files are explicitly `null`. The date `2026-11-02` is receipt of the upload, not upstream retrieval.
@@ -95,3 +95,7 @@ The reviewed screenshot `test-results/real-boundary-map.png` shows the actual th
 NDVI/LST definitions remain planned and disabled. Future scenes need acquisition dates, original licenses, cloud/QA masking, units, scale/offset, no-data convention and reproducible processing. NDVI is unitless; LST must use explicit temperature units and is not air temperature. Rendered colors are never scientific observations.
 
 The current validator reports **three supplied polygons and three population observations**. Remaining limitations: upstream snapshot equality and full original attribution/license-notice review, independent original CRS confirmation, BPS primary-page/reuse evidence, census-to-boundary geographic reconciliation, and live basemap availability. NDVI/LST, density and other derived statistics remain unavailable. Keep the work on the feature branch; no main merge or public release is authorized by these development checks.
+
+## Deployment preparation
+
+The API remains inaccessible, but the official repository CSV provides exact-ID primary metadata. Full source notices and upstream geometry comparison are pending. A separate boundary-free private-preview build and audited ZIP are prepared for an isolated Hostinger PHP/HTML website. See [Hostinger instructions](deployment-hostinger.md). No public deployment is authorized or performed.

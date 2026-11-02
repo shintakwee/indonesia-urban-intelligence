@@ -25,7 +25,10 @@ if(dataset.status==='ready'&&dataset.provenance.verification==='reviewed-origina
  if(audit.sha256!==p.sourceSha256||JSON.stringify(audit.shapeIds)!==JSON.stringify(dataset.collection.features.map(f=>f.properties.sourceShapeId)))throw new Error('Boundary source identities differ from geometry audit');
 }
 if(dataset.status==='ready'&&dataset.provenance.verification==='supplied-subset'){
- const p=dataset.provenance,raw=await readFile(resolve(root,SUPPLIED_BOUNDARY_PATH));
+ const p=dataset.provenance;
+ const indexProof=JSON.parse(execFileSync(process.env.IUI_GIS_PYTHON||'python3',[resolve(root,'scripts/check-metadata-index.py')],{encoding:'utf8'}));
+ if(p.metadataIndex?.sha256!==indexProof.indexSha256||p.metadataIndex?.url!==indexProof.sourceUrl||!p.attribution.includes(indexProof.row.boundarySource))throw new Error('Attribution differs from official metadata index');
+ const raw=await readFile(resolve(root,SUPPLIED_BOUNDARY_PATH));
  if(sha(raw)!==SUPPLIED_BOUNDARY_SHA256||sha(raw)!==p.sourceSha256)throw new Error('Uploaded source checksum mismatch');
  if(!isDeepStrictEqual(normalizeSuppliedBoundaries(JSON.parse(raw)),dataset.collection))throw new Error('Application geometries or properties differ from uploaded source');
  const record=await readFile(resolve(root,'docs/source-evidence/uploaded/provenance.json'));
@@ -34,8 +37,8 @@ if(dataset.status==='ready'&&dataset.provenance.verification==='supplied-subset'
  const report=JSON.parse(execFileSync(process.env.IUI_GIS_PYTHON||'python3',[resolve(root,'scripts/check-geometry.py'),resolve(root,SUPPLIED_BOUNDARY_PATH)],{encoding:'utf8'}));
  if(!isDeepStrictEqual(report,JSON.parse(savedReport)))throw new Error('Geometry validation differs from retained report; investigate before regenerating it');
  console.log('Supplied geometry: exact upload checksum, original coordinates/properties, WGS84 range/order, Shapely topology, no interior overlaps, and region IDs validated.');
- console.log('Publication remains pending: original upstream metadata, source attribution and snapshot equivalence have not been verified.');
- if(process.argv.includes('--require-publishable'))throw new Error('Release validation blocked: uploaded subset is not independently verified against upstream source and attribution notices');
+ console.log('Official metadata index confirmed; publication remains pending for complete original notices and upstream geometry equality.');
+ if(process.argv.includes('--require-publishable'))throw new Error('Release validation blocked: complete original source notices and exact upstream geometry equality remain unverified');
 }
 for(const observation of population.observations){
  const path=resolve(root,observation.evidenceFile);

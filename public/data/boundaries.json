@@ -2703,7 +2703,7 @@
     "metadataUrl": "https://www.geoboundaries.org/api/current/gbOpen/IDN/ADM2/",
     "license": "CC-BY-3.0-IGO",
     "licenseUrl": "https://creativecommons.org/licenses/by/3.0/igo/",
-    "attribution": "geoBoundaries gbOpen — Indonesia ADM2, IDN-ADM2-22746128. User-supplied three-region extract; represented year 2020 and CC BY 3.0 IGO reported by the independent review. Original source attribution notices remain pending.",
+    "attribution": "geoBoundaries gbOpen — Indonesia ADM2, IDN-ADM2-22746128 (2020). Original sources: Badan Pusat Statistik (BPS - Statistics Indonesia), World Food Programme, OCHA ROAP. CC BY 3.0 IGO, confirmed by the official metadata index. Supplied subset; original source notices and upstream geometry comparison remain pending.",
     "retrievedAt": null,
     "receivedAt": "2026-11-02",
     "sourceSha256": "ba842977bb78f645c1d05a05132a90a0fbfd9a258ba652c6560a89ffd36ff12c",
@@ -2712,8 +2712,14 @@
     "citationSha256": null,
     "licenseSha256": null,
     "receiptSha256": null,
+    "metadataIndex": {
+      "url": "https://raw.githubusercontent.com/wmgeolab/geoBoundaries/8ce2700661a28ee944350e2b329bbabb58d2ff83/releaseData/geoBoundariesOpen-meta.csv",
+      "commit": "8ce2700661a28ee944350e2b329bbabb58d2ff83",
+      "sha256": "d6f81bc9d3239f63fc36a62c6e3774ae892cedd5c653b8873fe1148311929eea",
+      "rowEvidenceFile": "docs/source-evidence/geoboundaries-metadata-index/IDN-ADM2-22746128.json"
+    },
     "uploadEvidenceFile": "docs/source-evidence/uploaded/iui-yogyakarta-boundaries.geojson",
-    "uploadRecordSha256": "7e315feab0620cf8574818a438ce686364a2634b4e69a9e4f9914738a2fdf150",
+    "uploadRecordSha256": "09f9b155a4fe01a54be666fd27bf1e5e4c4e56db1f9a9fd54e7c724b6750c59c",
     "validationReportSha256": "859d8c01437386045783c213dacd43cfa94f60fb1aa3db8c59d4c3add47b0b99",
     "changes": "Input geometries and original shape properties preserved. IUI IDs, display names and sourceShapeId added. No repair, reprojection, simplification, or rounding applied."
   }

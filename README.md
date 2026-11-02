@@ -8,7 +8,9 @@ A working bilingual React + TypeScript + Vite application for exploring Indonesi
 
 **The uploaded three-region polygons are now integrated for review.** The actual file's names, shape IDs (`IDN-ADM2-22746128` prefix), WGS84 coordinate interpretation, and Shapely topology passed validation; original coordinates and properties are preserved. Map hover, selection, zoom and bilingual tooltips are tested against this actual served GeoJSON. The accepted upload and report are retained in `docs/source-evidence/uploaded/`.
 
-**Source/publication verification is still incomplete:** the original upstream metadata/citation and exact snapshot equality have not been established. The supplied review reports **2020 / CC BY 3.0 IGO**. Original attribution notices are pending, and public-release validation explicitly fails until reviewed. See [English provenance and actual-file results](docs/phase-2.en.md) or [Dokumentasi Bahasa Indonesia](docs/phase-2.id.md). No GADM/FAO GAUL data or fabricated values are included. BPS reuse terms are separate.
+**Source/publication verification is still incomplete:** the official geoBoundaries metadata index now confirms IDN-ADM2-22746128, year 2020, CC BY 3.0 IGO, and the original source names. Complete source notices and exact upstream coordinate equality remain pending. See the [provenance review](docs/geoboundaries-provenance.md).
+
+A production-compiled **boundary-free private preview** is prepared for Hostinger Premium Web Hosting on a separate new domain. Build/package with `npm run package:hostinger-preview`; run `npm run test:private-preview`. Use only `artifacts/iui-hostinger-private-preview.zip` for that approved preview. It excludes all administrative geometry and defaults to denied access until new-site authentication is configured. See [deployment instructions](docs/deployment-hostinger.md). Nothing is deployed, merged or publicly cleared.
 
 ## Run
 

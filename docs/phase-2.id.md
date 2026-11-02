@@ -44,7 +44,7 @@ Shapely **2.1.2** memeriksa berkas nyata: semua poligon valid, tidak kosong, ber
 Sumber dataset yang dinyatakan: **geoBoundaries gbOpen, Indonesia / IDN ADM2**.
 https://www.geoboundaries.org/api/current/gbOpen/IDN/ADM2/
 
-Identitas versi yang diberikan: **`IDN-ADM2-22746128`**. Tinjauan metadata independen sebelumnya melaporkan `boundaryYearRepresented=2020` dan **CC BY 3.0 IGO**:
+Identitas versi yang diberikan: **`IDN-ADM2-22746128`**. Baris indeks metadata resmi yang kini berhasil diambil secara independen mengonfirmasi `boundaryYearRepresented=2020` dan **CC BY 3.0 IGO**:
 https://creativecommons.org/licenses/by/3.0/igo/
 
 Peta menampilkan ID/tahun, tautan lisensi, serta kredit geoBoundaries gbOpen dan subset unggahan. Subset dengan geometri/identitas tervalidasi dibedakan dari berkas sumber asli yang sudah ditinjau. Commit sumber, tanggal pengambilan primer, serta hash metadata/kutipan/lisensi yang belum ada ditulis sebagai `null`. Tanggal `2026-11-02` adalah penerimaan unggahan, bukan pengambilan dari penyedia.
@@ -95,3 +95,7 @@ Tangkapan yang ditinjau pada `test-results/real-boundary-map.png` memperlihatkan
 NDVI/LST tetap berupa rencana dengan kontrol nonaktif. Citra mendatang memerlukan tanggal akuisisi, lisensi asli, penyaringan awan/QA, satuan, skala/offset, konvensi tanpa data, dan pemrosesan yang dapat direproduksi. NDVI tidak bersatuan; LST harus memakai satuan suhu eksplisit dan bukan suhu udara. Warna tampilan bukan pengamatan ilmiah.
 
 Validator kini melaporkan **tiga poligon unggahan dan tiga pengamatan penduduk**. Keterbatasan tersisa: kesamaan snapshot asli dan tinjauan atribusi/lisensi lengkap, konfirmasi CRS asli secara independen, bukti halaman/ketentuan BPS, rekonsiliasi geografi sensus/batas, serta akses peta dasar daring. NDVI/LST, kepadatan, dan statistik turunan lain belum tersedia. Tetap gunakan cabang fitur; pemeriksaan pengembangan tidak mengizinkan penggabungan ke main atau rilis publik.
+
+## Persiapan penerapan
+
+API masih tidak dapat diakses, tetapi CSV repositori resmi menyediakan metadata primer dengan ID yang persis. Sumbernya adalah BPS–Statistics Indonesia, World Food Programme, dan OCHA ROAP. Bukti disimpan dan ditinjau pada [dokumentasi asal data](geoboundaries-provenance.md). Pemberitahuan sumber lengkap serta perbandingan geometri asli masih diperlukan. Paket pratinjau privat tanpa poligon sudah disiapkan untuk situs Hostinger PHP/HTML terpisah; lihat [petunjuk Hostinger](deployment-hostinger.md). Tidak ada penerapan publik atau penggabungan yang dilakukan.

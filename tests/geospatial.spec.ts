@@ -33,7 +33,7 @@ test('population stays blocked without complete primary-source observations; ras
 test('SP2020 population is preserved alongside the uploaded polygons',async({page})=>{
  await page.goto('/');
  await expect(page.getByLabel('Batas administrasi',{exact:true})).toBeEnabled();
- await expect(page.locator('.boundary-review-note')).toContainText('Geometri dan identitas lulus');
+ await expect(page.locator('.boundary-review-note')).toContainText('Metadata resmi mengonfirmasi');
  await page.getByRole('navigation').getByRole('link',{name:'Bandingkan',exact:true}).click();
  await expect(page.locator('.chart-bar')).toHaveCount(2);
  await expect(page.locator('.population-chart')).toContainText('373.589');

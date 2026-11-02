@@ -1,0 +1,6 @@
+{
+  "checkedAt": "2026-11-02T04:48:03.530881+00:00",
+  "url": "https://www.geoboundaries.org/api/current/gbOpen/IDN/ADM2/",
+  "expectedBoundaryId": "IDN-ADM2-22746128",
+  "error": "<urlopen error Tunnel connection failed: 403 Forbidden>"
+}
