@@ -1,6 +1,8 @@
 name: Build IUI private Hostinger preview
 
 on:
+  push:
+    branches: [feature/geospatial-integration]
   workflow_dispatch:
 
 permissions:
