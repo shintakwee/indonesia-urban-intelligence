@@ -1,0 +1,33 @@
+name: Build IUI private Hostinger preview
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout feature branch
+        uses: actions/checkout@v4
+      - name: Install Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Build audited boundary-free preview
+        run: npm run package:hostinger-preview
+      - name: Upload preview ZIP and manifest (private workflow artifact)
+        uses: actions/upload-artifact@v4
+        with:
+          name: iui-hostinger-private-preview
+          path: |
+            artifacts/iui-hostinger-private-preview.zip
+            artifacts/iui-hostinger-private-preview-manifest.json
+            docs/deployment-hostinger.md
+          if-no-files-found: error
+          retention-days: 7
