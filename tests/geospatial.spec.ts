@@ -30,15 +30,17 @@ test('population stays blocked without complete primary-source observations; ras
  expect(JSON.stringify(boundaryLayers)).toContain('hover');
  expect(JSON.stringify(boundaryLayers)).toContain('selected');
 });
-test('real shipped data is visibly blocked, with no misleading chart or boundary toggle',async({page})=>{
+test('SP2020 population is shown while real geometry stays unavailable',async({page})=>{
  await page.goto('/');
  await expect(page.getByLabel('Batas administrasi',{exact:true})).toBeDisabled();
  await expect(page.getByText(/Integrasi batas belum selesai/)).toBeVisible();
  await page.getByRole('navigation').getByRole('link',{name:'Bandingkan',exact:true}).click();
- await expect(page.getByText(/Grafik belum tersedia/)).toBeVisible();
- await expect(page.locator('.chart-bar')).toHaveCount(0);
+ await expect(page.locator('.chart-bar')).toHaveCount(2);
+ await expect(page.locator('.population-chart')).toContainText('373.589');
+ await expect(page.locator('.population-chart')).toContainText('1.125.804');
  await page.getByRole('button',{name:'Ganti bahasa'}).click();
- await expect(page.getByText(/Chart unavailable: BPS/)).toBeVisible();
+ await expect(page.locator('.population-chart')).toContainText('373,589');
+ await expect(page.locator('.population-chart')).toContainText('independent research review');
 });
 test('synthetic polygons exercise actual MapLibre hover, click, fit, toggle and bilingual tooltip',async({page})=>{
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));

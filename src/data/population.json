@@ -1,5 +1,76 @@
 {
-  "status": "blocked",
-  "reason": "source-access",
-  "observations": []
+  "status": "ready",
+  "provenance": {
+    "verification": "independent-review-supplied",
+    "sourceAccess": "blocked-in-environment",
+    "recordedAt": "2026-11-02",
+    "sourceUrl": "https://sensus.bps.go.id/topik/tabular/sp2020/1/15/0",
+    "reuseStatus": "terms-not-retrieved",
+    "evidenceFile": "docs/source-evidence/bps-sp2020-independent-review.json"
+  },
+  "observations": [
+    {
+      "regionId": "yogyakarta",
+      "indicatorId": "population",
+      "value": 373589,
+      "unit": "persons",
+      "year": 2020,
+      "referencePeriod": "2020-09",
+      "definitionId": "bps-sp2020-september-census-count",
+      "definition": {
+        "id": "Jumlah penduduk hasil Sensus Penduduk 2020 (SP2020), September 2020",
+        "en": "Population counted in the 2020 Population Census (SP2020), September 2020"
+      },
+      "sourceUrl": "https://sensus.bps.go.id/topik/tabular/sp2020/1/15/0",
+      "sourceTitle": "BPS · Sensus Penduduk 2020 (SP2020)",
+      "table": "SP2020 · /topik/tabular/sp2020/1/15/0",
+      "recordedAt": "2026-11-02",
+      "publisher": "BPS",
+      "geographyVersion": "BPS-SP2020-2020-reporting-geographies",
+      "evidenceFile": "docs/source-evidence/bps-sp2020-independent-review.json",
+      "verification": "independent-review-supplied"
+    },
+    {
+      "regionId": "sleman",
+      "indicatorId": "population",
+      "value": 1125804,
+      "unit": "persons",
+      "year": 2020,
+      "referencePeriod": "2020-09",
+      "definitionId": "bps-sp2020-september-census-count",
+      "definition": {
+        "id": "Jumlah penduduk hasil Sensus Penduduk 2020 (SP2020), September 2020",
+        "en": "Population counted in the 2020 Population Census (SP2020), September 2020"
+      },
+      "sourceUrl": "https://sensus.bps.go.id/topik/tabular/sp2020/1/15/0",
+      "sourceTitle": "BPS · Sensus Penduduk 2020 (SP2020)",
+      "table": "SP2020 · /topik/tabular/sp2020/1/15/0",
+      "recordedAt": "2026-11-02",
+      "publisher": "BPS",
+      "geographyVersion": "BPS-SP2020-2020-reporting-geographies",
+      "evidenceFile": "docs/source-evidence/bps-sp2020-independent-review.json",
+      "verification": "independent-review-supplied"
+    },
+    {
+      "regionId": "bantul",
+      "indicatorId": "population",
+      "value": 985770,
+      "unit": "persons",
+      "year": 2020,
+      "referencePeriod": "2020-09",
+      "definitionId": "bps-sp2020-september-census-count",
+      "definition": {
+        "id": "Jumlah penduduk hasil Sensus Penduduk 2020 (SP2020), September 2020",
+        "en": "Population counted in the 2020 Population Census (SP2020), September 2020"
+      },
+      "sourceUrl": "https://sensus.bps.go.id/topik/tabular/sp2020/1/15/0",
+      "sourceTitle": "BPS · Sensus Penduduk 2020 (SP2020)",
+      "table": "SP2020 · /topik/tabular/sp2020/1/15/0",
+      "recordedAt": "2026-11-02",
+      "publisher": "BPS",
+      "geographyVersion": "BPS-SP2020-2020-reporting-geographies",
+      "evidenceFile": "docs/source-evidence/bps-sp2020-independent-review.json",
+      "verification": "independent-review-supplied"
+    }
+  ]
 }

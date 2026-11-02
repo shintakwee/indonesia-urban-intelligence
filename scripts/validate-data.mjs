@@ -3,21 +3,31 @@ import {resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
 import {validateBoundaryDataset} from '../src/data/geospatial.ts';
-import {validatePopulationDataset} from '../src/data/indicators.ts';
+import {validateGeometryIdentity} from '../src/data/boundaryMetadata.ts';
+import {validatePopulationDataset,validatePopulationEvidence} from '../src/data/indicators.ts';
 const root=fileURLToPath(new URL('../',import.meta.url));
+const sha=body=>createHash('sha256').update(body).digest('hex');
 const dataset=validateBoundaryDataset(JSON.parse(await readFile(resolve(root,'public/data/boundaries.json'),'utf8')));
 const population=validatePopulationDataset(JSON.parse(await readFile(resolve(root,'src/data/population.json'),'utf8')));
 if(dataset.status==='ready'){
- const metadata=await readFile(resolve(root,'docs/source-evidence/geoboundaries-v6/geoBoundaries-IDN-ADM2-metaData.json'));
- const citation=await readFile(resolve(root,'docs/source-evidence/geoboundaries-v6/CITATION-AND-USE-geoBoundaries.txt'));
- if(createHash('sha256').update(metadata).digest('hex')!=='509074e115dcabd5f2a61e525e465af53075c0272f9e0375a031af82d4c78867'||createHash('sha256').update(citation).digest('hex')!=='f6ea7572bea6036c4cdcacf8c0ca7bf09098d4e600d19546d7432533e9a290d5')throw new Error('Source evidence checksum mismatch');
- const m=JSON.parse(metadata.toString('utf8'));
- if(dataset.provenance.boundaryId!==m.boundaryID||dataset.provenance.boundaryYear!==String(m.boundaryYear)||dataset.provenance.release!=='v6.0.0'||dataset.provenance.sourceSha256!=='02244eae72a37d304e68975ff0cabd507881dfa4390cdc7c6738d56ad4274234')throw new Error('Boundary provenance differs from pinned release evidence');
+ const directory=resolve(root,'docs/source-evidence/geoboundaries-idn-adm2');
+ const metadata=await readFile(resolve(directory,'geoBoundaries-IDN-ADM2-api.json'));
+ const citation=await readFile(resolve(directory,'CITATION-AND-USE-geoBoundaries.txt'));
+ const license=await readFile(resolve(directory,'CC-BY-3.0-IGO-legalcode.html'));
+ const receipt=await readFile(resolve(directory,'source-receipt.json'));
+ const p=dataset.provenance,r=JSON.parse(receipt),m=JSON.parse(metadata),identity=validateGeometryIdentity(m,r.geometryUrl,r.sourceCommit);
+ if(sha(metadata)!==p.metadataSha256||sha(citation)!==p.citationSha256||sha(license)!==p.licenseSha256||sha(receipt)!==p.receiptSha256)throw new Error('Source evidence checksum mismatch');
+ if(r.license!==p.license||r.licenseUrl!==p.licenseUrl||r.metadataUrl!==p.metadataUrl||r.retrievedAt!==p.retrievedAt||r.sha256.metadata!==sha(metadata)||r.sha256.citation!==sha(citation)||r.sha256.license!==sha(license)||p.boundaryId!==identity.boundaryId||p.sourceCommit!==identity.sourceCommit||p.sourceUrl!==identity.resolvedGeometryUrl||r.sha256.geometry!==p.sourceSha256||r.attribution!==p.attribution||r.reviewedForCommercialReuse!==true||r.thirdPartyNoticesReviewed!==true)throw new Error('Boundary provenance differs from reviewed original evidence');
+ const audit=JSON.parse(await readFile(resolve(directory,'geometry-audit.json'),'utf8'));
+ if(audit.sha256!==p.sourceSha256||JSON.stringify(audit.shapeIds)!==JSON.stringify(dataset.collection.features.map(f=>f.properties.sourceShapeId)))throw new Error('Boundary source identities differ from geometry audit');
 }
 for(const observation of population.observations){
  const path=resolve(root,observation.evidenceFile);
- if(!path.startsWith(resolve(root,'docs/source-evidence')+'/')||(await readFile(path)).length===0)throw new Error('Missing local BPS source evidence');
+ if(!path.startsWith(resolve(root,'docs/source-evidence')+'/'))throw new Error('Unsafe BPS evidence path');
+ const evidence=JSON.parse(await readFile(path,'utf8'));
+ validatePopulationEvidence(observation,evidence);
 }
 console.log(`Boundaries: ${dataset.status}; ${dataset.status==='ready'?dataset.collection.features.length:0} features.`);
-console.log(`Population: ${population.status}; ${population.observations.length} observations.`);
-if(dataset.status==='blocked'||population.status==='blocked')console.log('Source access remains blocked; real-data integration is incomplete.');
+console.log(`Population: ${population.status}; ${population.observations.length} observations (${population.provenance?.verification??'none'}).`);
+if(dataset.status==='blocked')console.log('Real administrative geometry remains unavailable. Upload originals listed in docs/phase-2.en.md; no network retries or alternatives are needed.');
+if(population.status==='ready')console.log('Population uses the supplied SP2020 review; direct BPS retrieval and detailed reuse terms remain unverified in this environment.');

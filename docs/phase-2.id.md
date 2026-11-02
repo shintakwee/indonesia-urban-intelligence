@@ -1,76 +1,90 @@
-# Fase 2 — status integrasi geospasial
+# Fase 2 — penduduk SP2020 dan geometri administrasi yang masih diperlukan
 
-Cabang ini melanjutkan commit `db62c97` dengan mempertahankan beranda dwibahasa, navigasi, pemilih wilayah, dan desain responsif. **Integrasi data nyata belum selesai.** Belum ada poligon administrasi atau pengamatan penduduk pada data produksi.
+Pekerjaan tetap pada `feature/geospatial-integration`; commit `d888569` dan desain dwibahasa dipertahankan. **Perbandingan penduduk sudah diintegrasikan; geometri administrasi nyata belum tersedia.**
 
-## Pemeriksaan sumber dan lisensi (2026-11-02)
+## Sumber penduduk, definisi, dan verifikasi
 
-| Sumber | Bukti yang diperoleh | Hasil |
-| --- | --- | --- |
-| BIG, `https://tanahair.indonesia.go.id` | Hasil koneksi proksi | HTTP CONNECT 403; geometri, versi, ketentuan, dan atribusi belum dapat diperiksa. Data BIG tidak didistribusikan ulang. |
-| BPS, `https://yogyakarta.bps.go.id` | Hasil koneksi proksi | HTTP CONNECT 403; tabel penduduk dan definisi statistik belum dapat diperiksa. Tidak ada nilai BPS yang disalin. |
-| Repositori resmi geoBoundaries di GitHub | Lisensi repositori dan pointer Git LFS v6.0.0 | Identitas sumber, commit rilis, hash objek, dan ukuran dapat ditetapkan. Geometri, metadata khusus dataset, dan kutipan belum tersedia. |
-| Unduhan media geoBoundaries | URL media standar yang dipatok | HTTP 403. Importir gagal sebelum mengganti data aplikasi. |
-| Git LFS geoBoundaries | Perintah Git LFS smudge standar | `Resource not accessible by integration`. Tidak dilakukan ekstraksi kredensial atau pengelakan kebijakan jaringan. |
+Sumber primer: **Badan Pusat Statistik (BPS), Sensus Penduduk 2020 (SP2020)**.
+https://sensus.bps.go.id/topik/tabular/sp2020/1/15/0
 
-Operasi Git hanya-baca menetapkan rilis resmi **v6.0.0** pada commit `1289e40e366c7b320550be1ee0614a9472d572d4`. Target dataset adalah **gbOpen / IDN / ADM2** (kabupaten/kota). Ini adalah rilis yang dipilih, **bukan tahun referensi batas yang sudah diverifikasi**. Tahun referensi dan ID batas khusus dataset belum diketahui sebelum metadata tersedia.
+| Wilayah pelaporan sensus | Penduduk September 2020 (jiwa) |
+| --- | ---: |
+| Kota Yogyakarta | 373.589 |
+| Kabupaten Sleman | 1.125.804 |
+| Kabupaten Bantul | 985.770 |
 
-Direktori sumber resmi:
-https://github.com/wmgeolab/geoBoundaries/tree/1289e40e366c7b320550be1ee0614a9472d572d4/releaseData/gbOpen/IDN/ADM2
+Pengguna menyediakan angka-angka persis ini sebagai hasil verifikasi tinjauan penelitian independen. Jalur akuisisi/verifikasi yang digunakan aplikasi adalah tinjauan tersebut. Pada 2026-11-02 URL BPS yang disediakan menghasilkan CONNECT 403 dari proksi; tidak ada klaim bahwa tabel primer sudah diunduh. Transkripsi bukti tersimpan pada `docs/source-evidence/bps-sp2020-independent-review.json` dan secara eksplisit diberi label bukti tinjauan dari pengguna, bukan salinan HTML/PDF/CSV BPS.
 
-Pointer rilis resmi mencatat:
+Ketiga pengamatan menggunakan URL sumber, seri jumlah penduduk sensus SP2020, tahun, bulan, dan satuan yang sama. Ketelitian waktu adalah **September 2020 (`2020-09`)**; tanggal harian tidak diberikan dan tidak dikarang. `recordedAt` adalah tanggal pencatatan tinjauan, bukan tanggal pengambilan sumber primer. Angka ini bersifat historis, bukan estimasi terkini atau registrasi kependudukan. Geografi pelaporan BPS belum direkonsiliasi secara spasial dengan geoBoundaries. Kepadatan, statistik zonal, dan indikator lingkungan belum tersedia.
 
-| Aset | Ukuran (byte) | SHA256 yang diharapkan |
-| --- | --- | --- |
-| Metadata JSON | 1.049 | `509074e115dcabd5f2a61e525e465af53075c0272f9e0375a031af82d4c78867` |
-| GeoJSON sederhana | 9.691.803 | `02244eae72a37d304e68975ff0cabd507881dfa4390cdc7c6738d56ad4274234` |
-| Teks kutipan/penggunaan | 4.316 | `f6ea7572bea6036c4cdcacf8c0ca7bf09098d4e600d19546d7432533e9a290d5` |
+Grafik memakai dua pengamatan nyata yang dipilih, format angka sesuai bahasa, titik awal nol, dan skala bersama dengan maksimum sebesar jumlah penduduk terbesar yang dipilih. Tabel menggunakan nilai serta periode yang sama. Tautan sumber dan keterbatasan verifikasi ditampilkan di dekat grafik. BPS tetap dicantumkan sebagai sumber. Ketentuan penggunaan/redistribusi BPS terperinci belum diberikan atau diambil; **tidak ada klaim lisensi Creative Commons atau izin komersial menyeluruh atas materi BPS**. Lisensi batas tidak boleh diterapkan ke statistik. Ekspor tabel primer dan pemberitahuan penggunaan BPS dapat diunggah kemudian untuk memperkuat bukti.
 
-Hash yang diharapkan mengidentifikasi objek, **bukan bukti bahwa objek sudah diunduh atau diverifikasi**. Salinan pointer tersimpan di `docs/source-evidence/`.
+## Identitas batas dan koreksi lisensi
 
-Lisensi repositori yang diperiksa pada commit `8ce2700661a28ee944350e2b329bbabb58d2ff83` adalah CC BY 4.0. Lisensi ini mengizinkan penggunaan komersial dengan kredit yang sesuai, tautan lisensi, keterangan perubahan, tanpa kesan dukungan pemberi lisensi atau pembatasan tambahan. Salinannya ada di `docs/source-evidence/geoboundaries-repository-LICENSE.txt` (SHA256 `c6e6f4f2cc8aa4fe74aa536570af16f0ffafd56c5878822043b4851fb858d1d1`). Bukti tingkat repositori ini **tidak menggantikan** pemeriksaan metadata, sumber asli, dan kutipan khusus dataset. Tidak ada klaim lisensi komersial untuk materi BIG atau BPS yang belum diperiksa.
+Endpoint metadata primer yang ditinjau secara independen:
+https://www.geoboundaries.org/api/current/gbOpen/IDN/ADM2/
 
-## Implementasi yang menunggu data terverifikasi
+Tinjauan melaporkan:
 
-- Sumber GeoJSON MapLibre, lapisan isi/garis poligon, sorotan saat kursor diarahkan, pemilihan lewat klik, tooltip dwibahasa, pembesaran seluruh cakupan Polygon/MultiPolygon, dan kontrol visibilitas batas.
-- Penanda referensi dan tombol wilayah yang dapat diakses melalui papan ketik menggunakan jalur pemilihan yang sama. Reset menampilkan seluruh cakupan; Escape menutup mode peta diperluas.
-- Aset batas dimuat dari origin aplikasi sendiri, terpisah dari ketersediaan OpenStreetMap. Aset rusak, hilang, atau tanpa asal data ditolak dengan pesan lokal. Kontrol batas pada versi ini dinonaktifkan.
-- Skema penduduk memerlukan tiga wilayah berbeda dengan tahun/tanggal/definisi/satuan/versi geografi yang sama, URL HTTPS primer BPS, kutipan tabel, dan referensi berkas bukti. Jumlah penduduk harus bilangan bulat positif dalam jiwa. Nilai kosong tidak diubah menjadi nol.
-- Komponen grafik batang responsif dengan titik awal nol dan pengikatan tabel sudah dibuat. Nilai hanya ditampilkan jika seri lengkap lolos validasi. **Belum ada grafik nyata yang ditampilkan atau diverifikasi terhadap data BPS.**
-- Registri NDVI/LST menggunakan kontrak tipe terpisah: raster siap harus memiliki URL ubin dan asal pemrosesan; entri rencana tidak dapat memiliki ubin. Keduanya tetap dinonaktifkan. Belum ada pemrosesan raster atau nilai analitis.
+- Negara/tingkat: **IDN / ADM2**.
+- `boundaryYearRepresented`: **2020**.
+- `boundaryLicense`: **CC BY 3.0 IGO**.
+- Lisensi: https://creativecommons.org/licenses/by/3.0/igo/
 
-## Impor batas yang dapat direproduksi
+Ini adalah informasi khusus dataset. **Jangan memberi label CC BY 4.0 pada dataset Indonesia ini.** Lisensi tingkat repositori dan pointer Git LFS v6 yang diperiksa sebelumnya tidak menetapkan identitas/lisensi dataset API ini. Salinan historis tetap disimpan di `docs/source-evidence/` untuk audit; importir baru tidak lagi memakai hash lama atau mengasumsikan rilis v6. Tinjauan field metadata disimpan terpisah pada `geoboundaries-idn-adm2-independent-review.json`; berkas tersebut bukan tanggapan API asli.
 
-Memerlukan Node 24+, curl dengan TLS/proksi tepercaya, dan Python dengan dependensi Shapely yang dipatok untuk pemeriksaan topologi:
+CC BY 3.0 IGO mengizinkan penggunaan komersial dengan mematuhi ketentuan sebenarnya: kredit sumber/pencipta yang sesuai, rujukan/tautan lisensi, pemberitahuan sumber yang dipertahankan, dan keterangan perubahan/adaptasi. Lisensi ini tidak mengizinkan kesan dukungan atau penggunaan identitas/logo organisasi tanpa batas. Pengecualian pihak ketiga pada metadata/kutipan juga harus diperiksa. Kredit sumber asli tidak dapat direkonstruksi tanpa metadata dan kutipan asli; karena itu **belum ada geometri yang didistribusikan ulang**. Batas GADM atau FAO GAUL tidak digunakan.
+
+URL metadata tersebut juga menghasilkan CONNECT 403 pada satu percobaan dalam kelanjutan ini. Unduhan terblokir tidak diulang dan tidak dicari dataset alternatif.
+
+## Paket unggahan persis yang diperlukan
+
+Unggah ZIP berisi **berkas asli** berikut dan bukti penerimaan yang sudah ditinjau. Geometri sederhana dipilih agar ukuran unggahan lebih kecil dan harus berasal dari tanggapan API/snapshot yang sama.
+
+| Nama berkas | Asal/persyaratan |
+| --- | --- |
+| `geoBoundaries-IDN-ADM2-api.json` | Simpan JSON tanggapan API di atas secara lengkap tanpa penyuntingan. Harus memuat ID dataset, ISO/tingkat, tahun representasi, lisensi, sumber batas asli, dan tautan unduhan. Ringkasan yang ditulis ulang tidak cukup. |
+| `geoBoundaries-IDN-ADM2_simplified.geojson` | Unduh **berkas persis dari `simplifiedGeometryGeoJSON` pada tanggapan tersebut**, dengan seluruh fitur ADM2 Indonesia, properti, ID bentuk, dan koordinat WGS84. Jangan ganti rilis atau menggambar batas manual. |
+| `CITATION-AND-USE-geoBoundaries.txt` | Ambil dari direktori dataset dan snapshot repositori geoBoundaries yang sama dengan geometri. Pertahankan semua kredit/pemberitahuan asli. |
+| `CC-BY-3.0-IGO-legalcode.html` | Simpan teks hukum lengkap yang berlaku dari https://creativecommons.org/licenses/by/3.0/igo/legalcode . Sertakan pula pemberitahuan khusus dataset yang dirujuk metadata/kutipan di dalam arsip. |
+| `source-receipt.json` | Catat URL/waktu unduhan sebenarnya, SHA256, commit repositori lengkap yang diverifikasi secara eksternal, atribusi persis, serta hasil tinjauan penggunaan komersial dan pemberitahuan pihak ketiga. |
+
+Receipt adalah catatan tinjauan, bukan tanda tangan digital penyedia. Hitung SHA256 dari byte berkas yang benar-benar diunduh; jangan mengisi nilai yang tidak diketahui dengan angka rekaan. Jika URL metadata memakai commit pendek, verifikasi commit lengkap dari repositori resmi dan catat hasilnya. Commit lengkap harus cocok dengan awalan revisi pada URL asli.
+
+Struktur `source-receipt.json` tersedia lengkap pada [dokumentasi bahasa Inggris](phase-2.en.md). Isilah seluruh field berikut berdasarkan bukti, bukan perkiraan:
+
+- `metadataUrl`: endpoint API di atas; `geometryUrl`: nilai asli `simplifiedGeometryGeoJSON`.
+- `sourceCommit`: commit penuh 40 karakter; `boundaryID`: ID asli dari tanggapan.
+- `retrievedAt`: tanggal pengambilan sebenarnya (`YYYY-MM-DD`).
+- `license`: `CC-BY-3.0-IGO`; `licenseUrl`: `https://creativecommons.org/licenses/by/3.0/igo/`.
+- `attribution`: kredit geoBoundaries dan sumber asli yang telah diperiksa, termasuk `boundarySource` persis.
+- `reviewedForCommercialReuse` dan `thirdPartyNoticesReviewed`: `true` **hanya setelah** seluruh pemberitahuan dan ketentuan memang diperiksa.
+- `sha256.metadata`, `sha256.geometry`, `sha256.citation`, `sha256.license`: hash berkas asli.
+
+Jangan menyunting geometri agar lolos validasi. Lisensi tidak didukung, tahun/identitas tidak cocok, wilayah ambigu, geometri rusak, atau pemberitahuan bertentangan harus menghentikan impor untuk ditinjau.
+
+## Impor luring dan validasi
+
+Setelah berkas tersedia, ekstrak di luar checkout dan pertahankan arsip asli untuk audit. Dependensi topologi opsional diisolasi pada lingkungan virtual:
 
 ```sh
 python3 -m venv /tmp/iui-gis-venv
 /tmp/iui-gis-venv/bin/pip install -r scripts/requirements-geospatial.txt
-IUI_GIS_PYTHON=/tmp/iui-gis-venv/bin/python npm run data:boundaries
-npm run data:validate
+IUI_GIS_PYTHON=/tmp/iui-gis-venv/bin/python npm run data:boundaries -- /absolute/path/to/upload-directory
 npm run typecheck
+npm run data:validate
 npm run build
 npm test
 ```
 
-Importir menggunakan HTTPS standar, verifikasi TLS, dan proksi bawaan. Commit resmi dan hash ketiga objek dipatok; lisensi/geografi yang tidak sesuai ditolak. Nama wilayah harus cocok persis dan unik; ID bentuk asli dipertahankan. Cincin dan cakupan koordinat diperiksa, lalu Shapely menolak topologi rusak atau poligon studi tumpang tindih. Geometri tidak diperbaiki atau dikarang. Koordinat sederhana dari sumber tetap utuh. Metadata/kutipan asli disimpan bersama checksum; setelah semua pemeriksaan berhasil, data aplikasi diganti secara atomik. Akurasi hukum/kartografis tetap memerlukan tinjauan independen; topologi yang benar tidak membuktikan batas hukum.
+`data:boundaries` kini **sepenuhnya luring**. Tanpa direktori masukan, perintah berhenti dengan daftar berkas dan tidak meminta akses jaringan. Pemeriksaan mencakup identitas API IDN ADM2 tahun 2020, CC BY 3.0 IGO, revisi unduhan resmi yang ditautkan metadata, hash/atribusi receipt, identitas/jumlah fitur sumber, kecocokan wilayah unik, penutupan cincin, dan cakupan geografis. Shapely kemudian memeriksa topologi valid, geometri tidak kosong, dan tidak ada tumpang tindih poligon studi. Geometri disubset tanpa perubahan koordinat dan ID asli dipertahankan. Metadata, kutipan, lisensi, receipt, dan audit geometri disimpan sebelum aset batas diganti secara atomik.
 
-Tahap unduhan sudah dijalankan dan gagal dengan HTTP 403. Jalur unduhan berhasil, pembacaan metadata nyata, dan validasi topologi nyata **belum terverifikasi**. Jalankan kembali setelah akses tersedia. Importir ini belum merupakan akuisisi data yang selesai.
+Pemeriksaan tersebut memeriksa struktur/topologi dan rantai bukti yang disediakan; bukan verifikasi sumber jarak jauh yang independen atau pengesahan hukum/kartografis. Kepercayaan pada receipt hash berasal dari tinjauan independen. Jalur impor berkas nyata serta topologi berhasil **belum dijalankan** karena geometri asli belum diberikan. Setelah impor, periksa ketiga cakupan dan perbarui status batas dwibahasa sebelum publikasi. Tahun yang sama tidak membuktikan kesetaraan geografi sensus dan batas.
 
-## Persyaratan data penduduk
+Sorotan kursor MapLibre, pemilihan klik/papan ketik, tooltip dwibahasa, pembesaran cakupan, kontrol visibilitas, dan tampilan lisensi/atribusi sudah tersedia. Pengujiannya hanya menggunakan geometri sintetis melalui pencegatan permintaan. **Tidak ada poligon sintetis yang disertakan sebagai batas administrasi nyata.**
 
-`src/data/population.json` sengaja berstatus `blocked` dengan daftar kosong. Sebelum mengubahnya menjadi siap:
+## Lapisan mendatang dan keterbatasan
 
-1. Ambil tabel/publikasi primer BPS yang meliputi ketiga wilayah pada satu tahun referensi dan satu seri statistik, misalnya satu rilis sensus atau versi proyeksi. Catat tanggal referensi, definisi penghitungan, satuan asli, nomor halaman/tabel, URL sumber, tanggal pengambilan, dan versi geografi.
-2. Simpan bukti sumber di `docs/source-evidence/` jika ketentuan penggunaan mengizinkan. Verifikasi konversi satuan; ribuan jiwa berbeda dari jiwa. Pastikan kecocokan kode administrasi dan kota/kabupaten, bukan hanya nama yang dapat ambigu.
-3. Periksa pengamatan terhadap sumbernya. Skema TypeScript memeriksa kesesuaian, **bukan kebenaran angka yang dimasukkan secara manual**. Jangan campurkan registrasi kependudukan, sensus, dan proyeksi.
-4. Isi seluruh atribut pengamatan, jalankan pengujian/build, periksa grafik/tabel nyata, dan perbarui dokumentasi status/sumber dwibahasa. Versi ini belum memiliki adaptor impor BPS yang terverifikasi.
+NDVI/LST tetap berupa rencana dengan kontrol nonaktif. Citra mendatang memerlukan tanggal akuisisi, lisensi asli, penyaringan awan/QA, satuan, skala/offset, konvensi tanpa data, dan pemrosesan yang dapat direproduksi. NDVI tidak bersatuan; LST harus memakai satuan suhu eksplisit dan bukan suhu udara. Warna tampilan bukan pengamatan ilmiah.
 
-## NDVI dan suhu permukaan lahan mendatang
-
-Lakukan pemrosesan citra di luar peramban. Catat penyedia/ID citra, waktu akuisisi, lisensi, penyaringan awan/QA, versi geometri, nilai tanpa data, skala/offset, waktu pemrosesan, algoritme, dan satuan. NDVI tidak bersatuan dengan rentang yang diharapkan −1 hingga 1. LST harus secara eksplisit mengonversi suhu berskala dari penyedia menjadi °C; LST bukan suhu udara. Proyeksikan ulang ubin tampilan ke Web Mercator, tetapi simpan nilai georeferensi siap analisis secara terpisah untuk statistik zonal. Jangan turunkan nilai ilmiah dari warna ubin. `RasterLayerDefinition` adalah kontrak integrasi; tidak ada citra sintetis atau hasil raster pada aplikasi.
-
-## Validasi dan pekerjaan tersisa
-
-Build produksi, pemeriksaan TypeScript eksplisit, dan validator status data lulus. Delapan pengujian Playwright meliputi perilaku dwibahasa/seluler, tampilan data kosong, penolakan skema, dan interaksi MapLibre. **Pengujian GIS mencegat permintaan batas dengan persegi panjang yang secara eksplisit sintetis pada `tests/fixtures/boundaries.ts`; geometri ini tidak pernah disertakan dalam aplikasi.** Pengujian tersebut memeriksa hubungan antarkomponen, bukan akurasi administrasi nyata. Tidak ada data statistik contoh untuk pengujian atau nilai tiruan pada produksi.
-
-Akses sumber menghalangi poligon dan hasil penduduk nyata. Domain publik yang diperlukan sudah disimpan dalam draf konfigurasi lingkungan. Tinjau/simpan pengaturan tersebut dan publikasikan lingkungan untuk mengaktifkannya; draf tersimpan bukan akses runtime yang sudah diterapkan. Setelah itu, jalankan kembali akuisisi dan verifikasi. Domain lama dan preset pengelola paket tetap dipertahankan. Unduhan batas tidak memerlukan rahasia; kebutuhan API BPS harus ditentukan dari endpoint yang benar-benar dipilih, bukan diasumsikan.
+Pemeriksaan saat ini meliputi jumlah penduduk nyata yang disediakan, kesesuaian dengan bukti, ketelitian bulan, penolakan definisi/geografi tidak selaras, grafik dwibahasa beserta nama aksesibelnya, proporsi batang, tautan sumber/lisensi, lebar seluler, navigasi lama, dan interaksi GIS sintetis. Validator melaporkan **tiga pengamatan penduduk dan nol poligon nyata**. Pekerjaan tersisa adalah paket batas asli, validasi/tinjauan visual geometri nyata, rekonsiliasi geografi sensus/batas, serta bukti tabel dan ketentuan penggunaan BPS. Jangan gabungkan ke main tanpa persetujuan.

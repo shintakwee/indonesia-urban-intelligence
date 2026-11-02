@@ -4,7 +4,9 @@ A working bilingual React + TypeScript + Vite application for exploring Indonesi
 
 ## Phase 2 status
 
-Work continues on `feature/geospatial-integration` from `db62c97`. Polygon interactions, validated data contracts, and a gated population-chart component are implemented, but **real boundary and BPS population integration is blocked by source access**. The shipped data remains empty and explicitly labeled. See [English provenance and methodology](docs/phase-2.en.md) or [Dokumentasi Bahasa Indonesia](docs/phase-2.id.md) for evidence, licensing limits, import commands, and remaining work. No GIS or population results are fabricated.
+`feature/geospatial-integration` now displays the independently reviewed BPS SP2020 September 2020 counts supplied by the user: Kota Yogyakarta **373,589**, Sleman **1,125,804**, Bantul **985,770** persons. The chart and table cite the [primary BPS table](https://sensus.bps.go.id/topik/tabular/sp2020/1/15/0) and explicitly record the supplied review as the verification path; the page remains network-blocked here.
+
+**Real boundary integration remains incomplete.** The supplied Indonesia ADM2 metadata review reports **2020 / CC BY 3.0 IGO**, not CC BY 4.0. No geometry has been supplied. The offline importer requires the matching original metadata, simplified GeoJSON, citation, license text, and reviewed source receipt. See [English provenance and exact upload checklist](docs/phase-2.en.md) or [Dokumentasi Bahasa Indonesia](docs/phase-2.id.md). No GADM/FAO GAUL data or fabricated statistics/polygons are included. BPS reuse terms remain separate and have not been retrieved.
 
 ## Run
 
@@ -26,14 +28,14 @@ Build output is in `dist/`. Deploy that directory to any static host. Hash-based
 
 - Original responsive homepage and study-area illustration, explicitly labeled conceptual.
 - MapLibre GL JS map with OpenStreetMap raster basemap, three approximate reference markers, place selection, zoom, reset, expand, and layer visibility controls.
-- Side-by-side region selectors and comparison table with explicit missing-data states.
+- Side-by-side selectors, real SP2020 population chart/table, and explicit missing-data states for other indicators.
 - Indonesian and English translations across all pages, with persisted language preference.
 - Data Sources, Methodology, About, and Collaboration pages.
 - Accessible labels, keyboard controls, mobile navigation, and network/WebGL fallback messages.
 
 ## Data integrity and limitations
 
-No statistical observations or administrative polygons are included. Reference coordinates in `src/data/catalog.ts` are approximate navigation aids, not verified administrative centroids. They cannot support area, population, or regional GIS calculations. The comparison displays no invented measurements, rankings, or differences.
+Three real SP2020 population observations are included via the supplied independent review. No administrative polygons are included. Reference coordinates in `src/data/catalog.ts` are approximate navigation aids, not verified administrative centroids. They cannot support area, population, or regional GIS calculations. The comparison displays no invented measurements, rankings, or differences.
 
 OpenStreetMap provides the online basemap, with attribution and ODbL source link. Respect the [OSM tile usage policy](https://operations.osmfoundation.org/policies/tiles/): no bulk downloading or offline prefetch. For a public service with substantial traffic, configure a suitable hosted or self-hosted tile provider before deployment. Tiles require access to `tile.openstreetmap.org`. Official source websites listed in the registry are candidates, not imported datasets. Outbound source and map domains were blocked in the development environment, so live source and tile delivery were not verified there. Offline map interaction was tested with requests intentionally blocked.
 
@@ -44,14 +46,14 @@ Collaboration links to this GitHub repository; no contact form or partnership se
 - `src/data/catalog.ts`: study-area and source registry.
 - `src/data/geospatial.ts`: boundary validation, extent calculation, and planned NDVI/LST contracts.
 - `src/data/indicators.ts`: strict compatible-series population schema and validation.
-- `public/data/boundaries.json`, `src/data/population.json`: explicitly blocked production data.
-- `scripts/import-boundaries.mjs`: pinned, checksum-protected boundary acquisition (blocked before data retrieval in this environment).
-- `src/components/PopulationChart.tsx`: real-observation chart component, currently showing the explicit unavailable state.
+- `public/data/boundaries.json`: explicitly blocked geometry; `src/data/population.json`: the supplied SP2020 observations and verification provenance.
+- `scripts/import-boundaries.mjs`: offline-only import of original geoBoundaries files, checked against the reviewed receipt and dataset-specific CC BY 3.0 IGO identity.
+- `src/components/PopulationChart.tsx`: real SP2020 comparison with localized values, source links, and verification/reuse limitations.
 - `src/i18n.ts`: complete locale dictionaries.
 - `src/MapView.tsx`: map sources, layers, selection, network fallback.
-- `src/App.tsx`: navigation and page rendering; comparison currently uses explicit unavailable states.
+- `src/App.tsx`: existing navigation and page rendering; population comparison is active while density and environmental values remain unavailable.
 
-Before adding observations, follow the Phase 2 provenance checklist and verify primary publications and record source title and URL, retrieval date, reference year, units, methodology, and geography version. Implement an import adapter with validation and connect verified observations to the comparison view. Do not replace missing values with zero. Introduce official boundary GeoJSON only after validating provenance, CRS (WGS84 for display), boundary version, and reuse rights. Derive indicators only from compatible geographies, time periods, and definitions. Keep translations in sync.
+For additional observations, follow the Phase 2 provenance checklist and retain publication/verification evidence, reference precision, units, definitions, and geography. The existing SP2020 review evidence is distinct from a directly downloaded primary-source snapshot. Do not replace missing values with zero. Introduce official boundary GeoJSON only after validating provenance, CRS (WGS84 for display), boundary version, and reuse rights. Derive indicators only from compatible geographies, time periods, and definitions. Keep translations in sync.
 
 ## Browser tests
 
@@ -62,6 +64,6 @@ npx playwright install chromium
 PLAYWRIGHT_CHROMIUM_EXECUTABLE=/path/to/chrome npm test
 ```
 
-The cloud environment uses `/usr/bin/chromium` by default. Tests exercise bilingual navigation and persistence, comparison selection, reference markers and layer controls, blocked-tile fallback, and mobile navigation/overflow against the production build. Run `npm run build` before `npm test`. Browser-test artifacts are ignored. Additional GIS tests use synthetic geometry exclusively through request interception; it is not part of the production dataset and does not verify real administrative boundaries. No population values or statistical mocks are included.
+The cloud environment uses `/usr/bin/chromium` by default. Tests exercise bilingual navigation and persistence, comparison selection, reference markers and layer controls, blocked-tile fallback, and mobile navigation/overflow against the production build. Run `npm run build` before `npm test`. Browser-test artifacts are ignored. Additional GIS tests use synthetic geometry exclusively through request interception; it is not part of the production dataset and does not verify real administrative boundaries. Population tests use the supplied real SP2020 values, not mock counts.
 
-Explicit checks: `npm run typecheck`, `npm run data:validate`, `npm run build`, and `npm test`. The boundary importer is expected to fail while source access remains blocked.
+Explicit checks: `npm run typecheck`, `npm run data:validate`, `npm run build`, and `npm test`. The boundary importer requires supplied originals; without them it exits with the exact file list and makes no network request.

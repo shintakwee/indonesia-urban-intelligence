@@ -1,3 +1,4 @@
+import {BOUNDARY_LICENSE,BOUNDARY_LICENSE_URL,BOUNDARY_METADATA_URL} from './boundaryMetadata.ts';
 import type {Feature,FeatureCollection,MultiPolygon,Polygon,Position} from 'geojson';
 import type {Locale} from './catalog';
 
@@ -7,8 +8,9 @@ export type BoundaryFeature = Feature<Polygon | MultiPolygon, {regionId: RegionI
 export type BoundaryCollection = FeatureCollection<Polygon | MultiPolygon, BoundaryFeature['properties']>;
 export interface BoundaryProvenance {
  provider: 'geoBoundaries'; release: string; boundaryYear: string; boundaryId: string;
- sourceUrl: string; metadataUrl: string; license: 'CC-BY-4.0'; licenseUrl: string;
+ sourceUrl: string; metadataUrl: string; license: 'CC-BY-3.0-IGO'; licenseUrl: string;
  attribution: string; retrievedAt: string; sourceSha256: string; changes: string;
+ sourceCommit:string;metadataSha256:string;citationSha256:string;licenseSha256:string;receiptSha256:string;
 }
 export type BoundaryDataset = {status:'blocked';reason:'source-access';provenance:null;collection:null} |
  {status:'ready';provenance:BoundaryProvenance;collection:BoundaryCollection};
@@ -31,7 +33,7 @@ export function validateBoundaryDataset(value:unknown):BoundaryDataset {
  if(!record(value))throw new Error('Invalid boundary dataset');
  if(value.status==='blocked'&&value.reason==='source-access'&&value.provenance===null&&value.collection===null)return value as BoundaryDataset;
  const p=value.provenance;
- if(value.status!=='ready'||!record(p)||p.provider!=='geoBoundaries'||p.license!=='CC-BY-4.0'||p.licenseUrl!=='https://creativecommons.org/licenses/by/4.0/'||!['release','boundaryYear','boundaryId','attribution','retrievedAt','changes'].every(k=>nonempty(p[k]))||!https(p.sourceUrl)||!https(p.metadataUrl)||!/^\d{4}-\d{2}-\d{2}$/.test(String(p.retrievedAt))||!(/^[a-f0-9]{64}$/).test(String(p.sourceSha256)))throw new Error('Missing boundary provenance');
+ if(value.status!=='ready'||!record(p)||p.provider!=='geoBoundaries'||p.license!==BOUNDARY_LICENSE||p.licenseUrl!==BOUNDARY_LICENSE_URL||p.metadataUrl!==BOUNDARY_METADATA_URL||p.boundaryYear!=='2020'||!(/^[a-f0-9]{40}$/).test(String(p.sourceCommit))||!['metadataSha256','citationSha256','licenseSha256','receiptSha256'].every(k=>(/^[a-f0-9]{64}$/).test(String(p[k])))||!['release','boundaryYear','boundaryId','attribution','retrievedAt','changes'].every(k=>nonempty(p[k]))||!https(p.sourceUrl)||!https(p.metadataUrl)||!/^\d{4}-\d{2}-\d{2}$/.test(String(p.retrievedAt))||!(/^[a-f0-9]{64}$/).test(String(p.sourceSha256)))throw new Error('Missing boundary provenance');
  const c=value.collection;
  if(!record(c)||c.type!=='FeatureCollection'||!Array.isArray(c.features)||c.features.length!==3)throw new Error('Expected three study boundaries');
  const seen=new Set<string>();

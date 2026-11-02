@@ -1,0 +1,15 @@
+{
+  "evidenceType": "user-supplied-independent-research-review",
+  "recordedAt": "2026-11-02",
+  "metadataUrl": "https://www.geoboundaries.org/api/current/gbOpen/IDN/ADM2/",
+  "reportedFields": {
+    "boundaryISO": "IDN",
+    "boundaryType": "ADM2",
+    "boundaryYearRepresented": "2020",
+    "boundaryLicense": "CC BY 3.0 IGO"
+  },
+  "licenseUrl": "https://creativecommons.org/licenses/by/3.0/igo/",
+  "verificationScope": "Fields reported by the user’s independent review. Original API JSON, matching geometry, original citation, and license notices have not been supplied or retrieved. Do not treat this record as the actual API metadata.",
+  "geometryStatus": "not-obtained",
+  "reuseSummary": "CC BY 3.0 IGO permits commercial reuse subject to attribution, license terms, retained notices, and change/adaptation statements; exact source credit and any third-party exclusions still require the original dataset evidence."
+}

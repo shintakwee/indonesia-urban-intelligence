@@ -1,0 +1,30 @@
+{
+  "evidenceType": "user-supplied-independent-research-review",
+  "recordedAt": "2026-11-02",
+  "sourceUrl": "https://sensus.bps.go.id/topik/tabular/sp2020/1/15/0",
+  "publisher": "Badan Pusat Statistik (BPS)",
+  "series": "SP2020",
+  "referencePeriod": "2020-09",
+  "unit": "persons",
+  "observations": [
+    {
+      "regionId": "yogyakarta",
+      "name": "Kota Yogyakarta",
+      "value": 373589
+    },
+    {
+      "regionId": "sleman",
+      "name": "Kabupaten Sleman",
+      "value": 1125804
+    },
+    {
+      "regionId": "bantul",
+      "name": "Kabupaten Bantul",
+      "value": 985770
+    }
+  ],
+  "verificationScope": "The user explicitly supplied these primary-source census counts as verified by an independent research review. This file records that supplied evidence; it is not a downloaded BPS table or an independently retrieved primary-source snapshot.",
+  "sourceAccessInEnvironment": "Proxy CONNECT 403 on the supplied BPS URL; no repeated download attempted.",
+  "reuseStatus": "No BPS license or redistribution terms were supplied or retrieved. Credit BPS; do not assign the geoBoundaries license to BPS data.",
+  "boundaryCompatibility": "Census reporting geographies; spatial reconciliation with geoBoundaries geometry is not yet possible."
+}

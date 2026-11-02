@@ -1,76 +1,103 @@
-# Phase 2 — geospatial integration status
+# Phase 2 — SP2020 population and pending administrative geometry
 
-This branch extends commit `db62c97`; it preserves the bilingual homepage, navigation, region selectors, and responsive styling. **Real-data integration is incomplete.** No production administrative polygons or population observations are included.
+Work remains on `feature/geospatial-integration`, preserving `d888569` and the original bilingual design. **Population comparison is integrated; real administrative geometry is not yet integrated.**
 
-## Source and license investigation (2026-11-02)
+## Population source, definitions, and verification
 
-| Source | Evidence retrieved | Result |
-| --- | --- | --- |
-| BIG, `https://tanahair.indonesia.go.id` | Proxy connection result | HTTP CONNECT 403; no geometry, version, terms, or attribution could be inspected. No BIG data redistributed. |
-| BPS, `https://yogyakarta.bps.go.id` | Proxy connection result | HTTP CONNECT 403; no population table or statistical definition could be inspected. No BPS values transcribed. |
-| geoBoundaries official GitHub repository | Repository license and v6.0.0 Git LFS pointers | Source identity, release commit, expected object hashes and sizes established. Geometry and dataset-specific metadata/citation unavailable. |
-| geoBoundaries media download | Standard pinned media URL | HTTP 403. The importer failed before replacing application data. |
-| geoBoundaries Git LFS download | Standard Git LFS smudge | `Resource not accessible by integration`. No credential extraction or networking bypass attempted. |
+Primary source: **Badan Pusat Statistik (BPS), Sensus Penduduk 2020 (SP2020)**.
+https://sensus.bps.go.id/topik/tabular/sp2020/1/15/0
 
-A read-only Git operation resolved official release **v6.0.0** to `1289e40e366c7b320550be1ee0614a9472d572d4`. Target dataset: **gbOpen / IDN / ADM2** (district/city level). This is a selected release, **not a verified boundary reference year**. The reference year and dataset-specific boundary ID remain unknown until metadata is retrieved.
+| Census reporting area | September 2020 population (persons) |
+| --- | ---: |
+| Kota Yogyakarta | 373,589 |
+| Kabupaten Sleman | 1,125,804 |
+| Kabupaten Bantul | 985,770 |
 
-Official target directory:
-https://github.com/wmgeolab/geoBoundaries/tree/1289e40e366c7b320550be1ee0614a9472d572d4/releaseData/gbOpen/IDN/ADM2
+The user supplied these exact values as verified by an independent research review. That review is the acquisition/verification path used here. On 2026-11-02 the supplied BPS URL returned proxy CONNECT 403 in this environment; no downloaded primary table is claimed. The review transcription is retained in `docs/source-evidence/bps-sp2020-independent-review.json`. It explicitly identifies itself as user-supplied review evidence, not an HTML/PDF/CSV captured from BPS.
 
-Expected LFS objects, as recorded in the official release's raw pointer files:
+All three observations use the same source URL, SP2020 census-count series, year, month, and unit. Reference precision is **September 2020 (`2020-09`)**; no reference day was supplied, so none was invented. `recordedAt` records receipt of the review, not retrieval of the primary source. These are historical counts, not current estimates or civil-registration totals. BPS reporting geographies are not yet spatially reconciled with geoBoundaries. Density, zonal statistics, and environmental indicators remain unavailable.
 
-| Asset | Size (bytes) | Expected SHA256 |
-| --- | --- | --- |
-| Metadata JSON | 1,049 | `509074e115dcabd5f2a61e525e465af53075c0272f9e0375a031af82d4c78867` |
-| Simplified GeoJSON | 9,691,803 | `02244eae72a37d304e68975ff0cabd507881dfa4390cdc7c6738d56ad4274234` |
-| Citation and use text | 4,316 | `f6ea7572bea6036c4cdcacf8c0ca7bf09098d4e600d19546d7432533e9a290d5` |
+The chart uses the two selected real observations, locale-aware number formatting, a zero baseline, and a common scale whose maximum is the largest selected count. The table shows the same values and reference period. Original source links and the verification limitation appear beside the chart. BPS attribution is retained. Detailed BPS redistribution/reuse terms were not supplied or retrieved; **no blanket Creative Commons or commercial-use license is asserted for the BPS material**. The boundary license must never be assigned to the statistics. An original table export and the applicable BPS reuse notice can be uploaded later to strengthen the evidence record.
 
-The expected hashes identify objects; **they do not mean those objects were downloaded or verified**. Pointer snapshots are in `docs/source-evidence/`.
+## Boundary identity and licensing correction
 
-The inspected repository license, pinned at commit `8ce2700661a28ee944350e2b329bbabb58d2ff83`, is CC BY 4.0. It permits commercial reuse with appropriate attribution, a license link, indication of modifications, and no implied endorsement or additional restrictions. A copy is retained in `docs/source-evidence/geoboundaries-repository-LICENSE.txt` (SHA256 `c6e6f4f2cc8aa4fe74aa536570af16f0ffafd56c5878822043b4851fb858d1d1`). This repository-level evidence does **not** replace checking the dataset's metadata, original sources, and citation file. No commercial-use claim is made for uninspected BIG or BPS material.
+The independently reviewed primary metadata endpoint is:
+https://www.geoboundaries.org/api/current/gbOpen/IDN/ADM2/
 
-## Implemented, but gated on verified data
+The review reports:
 
-- MapLibre GeoJSON source and polygon fill/outline layers, hover feature state and highlight, click selection, localized DOM tooltips, full Polygon/MultiPolygon extent fitting, and a boundary-visibility control.
-- Existing reference markers and keyboard-accessible region buttons share the same selection path; full-extent reset and Escape to leave expanded mode are supported.
-- Boundary assets load from the application's own origin, independently of OpenStreetMap availability. Invalid, missing, or provenance-free assets fail closed with a localized message. The shipped boundary toggle is disabled.
-- Population schema requires three distinct regions, one common year/date/definition/unit/geography vintage, primary HTTPS BPS URLs, table citations, and evidence-file references. Counts must be positive integer persons; missing values never become zeros.
-- A responsive, zero-baseline comparison bar-chart component and table bindings are implemented. They render actual values only when the validated series is ready. **No real chart has been rendered or validated against BPS data.**
-- Planned NDVI/LST registry uses a discriminated contract. A ready raster requires tile URLs and processing provenance; planned entries cannot have tiles. Both controls remain disabled. No raster processing or analytical values are implemented.
+- Country/level: **IDN / ADM2**.
+- `boundaryYearRepresented`: **2020**.
+- `boundaryLicense`: **CC BY 3.0 IGO**.
+- License: https://creativecommons.org/licenses/by/3.0/igo/
 
-## Reproducible boundary ingestion
+This is dataset-specific information. **Do not label this Indonesia dataset CC BY 4.0.** The previously inspected repository-level license and v6 Git LFS pointers do not establish this API dataset's identity or license. Historical snapshots remain in `docs/source-evidence/` for audit history; the current importer no longer uses their old hashes or assumes a v6 release. The user-supplied metadata-field review is separately recorded in `geoboundaries-idn-adm2-independent-review.json`; it is not represented as the original API response.
 
-Requires Node 24+, curl with trusted TLS/proxy configuration, and Python with the pinned Shapely dependency for topology validation:
+CC BY 3.0 IGO allows commercial reuse subject to its actual terms: appropriate source/creator credit, the license reference/link, retained source notices, and identification of changes/adaptations. It does not authorize implied endorsement or unrestricted use of an organization's identity/logo. Any third-party exclusions in the source metadata/citation also need review. The exact original source attribution cannot be reconstructed without the original metadata and citation, so **no geometry is redistributed yet**. No GADM or FAO GAUL boundaries are used.
+
+The supplied metadata URL also returned proxy CONNECT 403 on the one attempt made in this continuation. No blocked download was retried and no alternative dataset was sought.
+
+## Exact upload bundle required for polygons
+
+Upload a ZIP containing the following **original files**, with a reviewed receipt. The simplified file is preferred to keep the upload manageable; it must come from the same API response/snapshot.
+
+| Filename | Obtain from / requirements |
+| --- | --- |
+| `geoBoundaries-IDN-ADM2-api.json` | Save the complete, unedited JSON response from the metadata endpoint above. It must contain the dataset ID, ISO/level, represented year, license, original boundary sources and download links. A hand-written summary is not sufficient. |
+| `geoBoundaries-IDN-ADM2_simplified.geojson` | Download the **exact file linked by `simplifiedGeometryGeoJSON` in that response**, preserving all Indonesia ADM2 features, properties, shape IDs, and WGS84 coordinates. Do not substitute another release or manually draw boundaries. |
+| `CITATION-AND-USE-geoBoundaries.txt` | Obtain from the same geoBoundaries repository snapshot/dataset directory as that geometry. Retain all original credit and notices. |
+| `CC-BY-3.0-IGO-legalcode.html` | Save the applicable full legal text from https://creativecommons.org/licenses/by/3.0/igo/legalcode . Include any additional dataset-specific notices referenced by the metadata/citation in the archive. |
+| `source-receipt.json` | Record actual download URLs/time, SHA256 hashes, the externally verified full repository commit, exact attribution, and commercial-reuse/third-party-notice review as described below. |
+
+The receipt is a review record, not an upstream signature. Compute hashes from the actual downloaded bytes. Do not fill any unknown field with an invented value. A metadata geometry URL may use a shortened commit; resolve it to the actual full commit using the official repository and record that resolution. The importer requires the full commit to match the original URL's revision prefix.
+
+Receipt structure (replace every placeholder with verified information):
+
+```json
+{
+  "metadataUrl": "https://www.geoboundaries.org/api/current/gbOpen/IDN/ADM2/",
+  "geometryUrl": "EXACT simplifiedGeometryGeoJSON URL from the original response",
+  "sourceCommit": "EXTERNALLY VERIFIED FULL 40-CHARACTER COMMIT",
+  "boundaryID": "EXACT boundaryID FROM THAT RESPONSE",
+  "retrievedAt": "ACTUAL YYYY-MM-DD",
+  "license": "CC-BY-3.0-IGO",
+  "licenseUrl": "https://creativecommons.org/licenses/by/3.0/igo/",
+  "attribution": "VERIFIED geoBoundaries AND ORIGINAL SOURCE CREDIT, including boundarySource verbatim",
+  "reviewedForCommercialReuse": true,
+  "thirdPartyNoticesReviewed": true,
+  "sha256": {
+    "metadata": "SHA256 OF API JSON",
+    "geometry": "SHA256 OF GEOJSON",
+    "citation": "SHA256 OF CITATION FILE",
+    "license": "SHA256 OF LEGAL TEXT FILE"
+  }
+}
+```
+
+Set review flags to true **only after** the original notices and license have actually been checked. Do not edit source geometry to make validation pass. An unsupported license, mismatched year/identity, ambiguous region, malformed geometry, or conflicting notice must stop ingestion for review.
+
+## Offline ingestion and validation
+
+Once those files are supplied, extract them outside the checkout and retain the original archive for audit. Optional topology tooling is isolated in a virtual environment:
 
 ```sh
 python3 -m venv /tmp/iui-gis-venv
 /tmp/iui-gis-venv/bin/pip install -r scripts/requirements-geospatial.txt
-IUI_GIS_PYTHON=/tmp/iui-gis-venv/bin/python npm run data:boundaries
-npm run data:validate
+IUI_GIS_PYTHON=/tmp/iui-gis-venv/bin/python npm run data:boundaries -- /absolute/path/to/upload-directory
 npm run typecheck
+npm run data:validate
 npm run build
 npm test
 ```
 
-The importer uses standard HTTPS downloads with TLS verification and the inherited proxy. It pins the official commit and all three object hashes, rejects an unexpected license/geography, requires unique exact region-name matches, retains original shape IDs, checks rings and geographic extents, and uses Shapely to reject invalid topology or overlapping study polygons. It does not repair or invent geometry. The simplified upstream coordinates are retained unchanged. Original metadata and citation are retained with checksums; only then is the application dataset atomically replaced. Full legal/cartographic accuracy still requires independent review; automated topology checks cannot establish legal administrative limits.
+`data:boundaries` is now **offline-only**: with no input directory it exits with the exact file list and makes no network request. It checks the original API's 2020 IDN ADM2 identity and CC BY 3.0 IGO, the metadata-linked official download revision, reviewed receipt hashes/attribution, source feature identity and count, unique regional matches, closed rings and expected geographic extents. Shapely must then verify nonempty valid topology and no overlapping study polygons. Geometry is subsetted without coordinate changes; original shape IDs are retained. Metadata, citation, license, receipt, and geometry audit are retained before the app's boundary asset is atomically replaced.
 
-The download step was executed and failed with HTTP 403; the successful-download, real metadata parsing, and real topology-validation paths are **unverified**. They must be run once access is available. Do not describe the importer as a completed data acquisition.
+These checks establish structural/topological consistency and the supplied evidence chain; they do not constitute independent remote verification of uploaded files or legal/cartographic certification. Source hash receipt trust is explicitly the independent review's trust. The real-file ingestion and successful topology path remain **unexecuted** because no original geometry was supplied. After ingestion, inspect all three extents and update bilingual boundary status text before publishing. Matching year labels alone do not prove census/boundary geographic equivalence.
 
-## Population ingestion requirements
+MapLibre hover highlight, click/keyboard selection, bilingual tooltip, full-extent fitting, visibility toggle, and license/attribution rendering are implemented. Their browser tests use clearly synthetic geometry only through request interception. **No synthetic polygon is shipped as a real administrative boundary.**
 
-`src/data/population.json` deliberately contains `status: blocked` and an empty list. Before changing it to ready:
+## Future layers and current limitations
 
-1. Retrieve a primary BPS table or publication that covers all three regions with one reference year and one statistical series (e.g. one census release or one projection vintage). Record reference date, counting definition, original units, page/table number, source URL, retrieval date, and geographic vintage.
-2. Preserve source evidence under `docs/source-evidence/` when reuse terms permit. Verify any unit conversion explicitly (thousands of persons are not persons). Resolve city/regency and administrative-code matches; do not join by ambiguous names alone.
-3. Have the observations checked against those sources. The TypeScript schema checks compatibility, **not the truth of a manually entered count**. Never mix civil registry, census and projection series.
-4. Populate the declared observation fields, run validation tests/build, inspect the real chart/table, and update bilingual source/status documentation. There is no verified BPS import adapter in this release.
+NDVI/LST definitions remain planned and disabled. Future scenes need acquisition dates, original licenses, cloud/QA masking, units, scale/offset, no-data convention and reproducible processing. NDVI is unitless; LST must use explicit temperature units and is not air temperature. Rendered colors are never scientific observations.
 
-## Future NDVI and land surface temperature
-
-Keep imagery processing outside the browser. Record provider/scene ID, acquisition time, license, cloud and QA masking, geometry version, no-data values, scale/offset, processing time, algorithm, and units. NDVI is unitless with an expected range of −1 to 1; LST must explicitly convert the provider's scaled temperatures to °C. Do not confuse LST with air temperature. Reproject display tiles to Web Mercator; retain analysis-ready georeferenced values separately for zonal statistics. Never derive scientific values from rendered tile colors. `RasterLayerDefinition` is the integration contract; no synthetic scenes or raster results are included.
-
-## Validation and remaining work
-
-The production build, explicit TypeScript check, and data-status validator pass. Eight Playwright tests cover prior bilingual/mobile behavior, missing-data UI, schema rejection, and MapLibre interactions. **GIS interaction tests intercept the boundary request with explicitly synthetic rectangles in `tests/fixtures/boundaries.ts`; these are never shipped in the app.** They test UI wiring, not real administrative accuracy. No statistical test fixtures or production mock values are supplied.
-
-Source access is the blocker for actual polygons and population results. Required public domains were saved in the environment configuration draft. Review/save those settings and publish the environment to activate them; a saved draft is not applied runtime access. Then rerun acquisition and verification. Other existing domains and the package-manager preset were preserved. No secrets are needed for the boundary download; any BPS API requirement must be established from the actual chosen endpoint, not assumed.
+Current checks cover the real supplied population counts, evidence/count agreement, month precision, inconsistent definitions/geographies, bilingual chart updates and accessible names, proportional bar lengths, source/license links, mobile overflow, original navigation, and synthetic GIS interactions. The validator reports **three population observations and zero real polygons**. Remaining work is the original boundary bundle, successful real geometry validation/visual review, census-to-boundary reconciliation, and primary BPS snapshot/reuse evidence. Do not merge into main without approval.
